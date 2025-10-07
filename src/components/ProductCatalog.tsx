@@ -1,8 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { OverlayTrigger, Tooltip } from "react-bootstrap";
+import { CardBody, OverlayTrigger, Tooltip } from "react-bootstrap";
 import ProductRating from "./ProductRating.tsx";
 import { Container, Row, Col, Card, ListGroup, Button } from "react-bootstrap";
+import { Link } from "react-router-dom";
 
 // Interface for ProductCatalog component props
 interface productProps {
@@ -71,6 +72,10 @@ const ProductCatalog: React.FC<productProps> = ({ selectedCategory }) => {
                       objectFit: "contain",
                       boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
                     }}
+                    onError={(e) => {
+                      (e.currentTarget as HTMLImageElement).src =
+                        "https://via.placeholder.com/300x300?text=No+Image";
+                    }}
                   />
 
                   <OverlayTrigger
@@ -108,21 +113,16 @@ const ProductCatalog: React.FC<productProps> = ({ selectedCategory }) => {
                       />
                     </ListGroup.Item>
                   </ListGroup>
-
-                  <Card.Body>
+                  <CardBody>
                     <Button
-                      as="a"
                       variant="primary"
                       className="w-100"
-                      href="#"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        window.location.href = `/products/${product.id}`;
-                      }}
+                      as={Link}
+                      to={`/product/${product.id}`}
                     >
-                      Add To Cart
+                      View Details
                     </Button>
-                  </Card.Body>
+                  </CardBody>
                 </Card>
               </Col>
             ))}

@@ -1,6 +1,11 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
+import { FaShoppingCart } from "react-icons/fa";
+import type { RootState } from "../Redux./store";
+// import "bootstrap-icons/font/bootstrap-icons.css";
 
 // Interface for Navbar component props
 interface NavbarProps {
@@ -17,7 +22,19 @@ const fetchCategories = async () => {
 };
 
 // Navbar component which receives props from app.tsx and fetches categories
-const Navbar: React.FC<NavbarProps> = ({ category, onChange }) => {
+const Navbar: React.FC<NavbarProps> = ({
+  category,
+  onChange,
+}: {
+  category: string;
+  onChange: (category: string) => void;
+}) => {
+  // Get cart items count from Redux store
+  const cartItems = useSelector((state: RootState) => state.cart.items);
+  const cartItemCount = cartItems.reduce(
+    (total, item) => total + item.quantity,
+    0
+  );
   // fetch categories data
   const {
     data: categories,
@@ -33,7 +50,9 @@ const Navbar: React.FC<NavbarProps> = ({ category, onChange }) => {
   if (isCategoriesLoading) return <p>Loading Categories...</p>;
   // handle error states
   if (isCategoriesError)
-    return <p>Error fetching categories: {(categoriesError as Error)?.message}</p>;
+    return (
+      <p>Error fetching categories: {(categoriesError as Error)?.message}</p>
+    );
 
   return (
     <>
@@ -56,6 +75,22 @@ const Navbar: React.FC<NavbarProps> = ({ category, onChange }) => {
                   </option>
                 ))}
               </select>
+            </div>
+            <div className="nav-item ms-3">
+              <Link
+                to="/cart"
+                className="btn btn-outline-light position-relative"
+                aria-label="View Cart"
+              >
+                <FaShoppingCart size={20} />
+                <span className="ms-2">Cart</span>
+                {cartItemCount > 0 && (
+                  <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                    {cartItemCount}
+                    <span className="visually-hidden">items in cart</span>
+                  </span>
+                )}
+              </Link>
             </div>
           </div>
         </div>
