@@ -14,8 +14,18 @@ interface CartState {
   taxRate: number;
 }
 
+// Load cart from sessionStorage if available
+const loadCartFromStorage = (): CartItem[] => {
+  try {
+    const storedCart = sessionStorage.getItem("productItem");
+    return storedCart ? JSON.parse(storedCart) : [];
+  } catch {
+    return [];
+  }
+};
+
 const initialState: CartState = {
-  items: [],
+  items: loadCartFromStorage(),
   taxRate: 0.08, // 8% tax rate - you can adjust this value
 };
 
@@ -31,10 +41,14 @@ const cartSlice = createSlice({
       } else {
         state.items.push({ ...p, quantity: 1 });
       }
+      // Sync to sessionStorage
+      sessionStorage.setItem("productItem", JSON.stringify(state.items));
       console.log(p);
     },
     removeFromCart: (state, action: PayloadAction<number>) => {
       state.items = state.items.filter((item) => item.id !== action.payload);
+      // Sync to sessionStorage
+      sessionStorage.setItem("productItem", JSON.stringify(state.items));
     },
     updateQuantity: (
       state,
@@ -49,14 +63,25 @@ const cartSlice = createSlice({
       } else {
         item.quantity = quantity; //set the quantity to the user's quantity
       }
+      // Sync to sessionStorage
+      sessionStorage.setItem("productItem", JSON.stringify(state.items));
     },
     setTaxRate: (state, action: PayloadAction<number>) => {
       state.taxRate = action.payload;
     },
+    clearCart: (state) => {
+      state.items = [];
+      sessionStorage.removeItem("productItem");
+    },
   },
 });
 
-export const { addToCart, removeFromCart, updateQuantity, setTaxRate } =
-  cartSlice.actions;
+export const {
+  addToCart,
+  removeFromCart,
+  updateQuantity,
+  setTaxRate,
+  clearCart,
+} = cartSlice.actions;
 
 export default cartSlice.reducer;

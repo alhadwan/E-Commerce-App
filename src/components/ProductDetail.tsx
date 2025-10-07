@@ -101,11 +101,11 @@ const ProductDetail = () => {
             <ListGroup.Item className="fw-bold fs-5">
               Item Price: ${product.price}
             </ListGroup.Item>
-            <ListGroup.Item className="fw-bold fs-5">
+            {/* <ListGroup.Item className="fw-bold fs-5">
               Tax: ${(product.price * taxRate).toFixed(2)} (8%)
-            </ListGroup.Item>
+            </ListGroup.Item> */}
             <ListGroup.Item className="text-success fw-bold fs-5">
-              Total: ${(product.price * (1 + taxRate)).toFixed(2)}
+              Total: ${product.price.toFixed(2)}
             </ListGroup.Item>
             <ListGroup.Item>
               <Button
