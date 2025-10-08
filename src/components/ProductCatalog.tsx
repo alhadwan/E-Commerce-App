@@ -1,12 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { CardBody } from "react-bootstrap";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { addToCart } from "../Redux./cartSlice";
 import ProductRating from "./ProductRating.tsx";
 import { Container, Row, Col, Card, ListGroup, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import type { AppDispatch, RootState } from "../Redux./store.ts";
+import type { AppDispatch } from "../Redux./store.ts";
 
 //This component fetches and displays a list of products based on the selected category.
 
@@ -133,17 +133,15 @@ const ProductCatalog: React.FC<productProps> = ({ selectedCategory }) => {
                     </ListGroup.Item>
                   </ListGroup>
                   <CardBody>
-                    <Button
-                      variant="primary"
-                      className="w-100"
-                      as={Link}
+                    <Link
                       to={`/product/${product.id}`}
+                      className="btn btn-primary w-100 text-decoration-none"
                     >
                       View Details
-                    </Button>
+                    </Link>
                     <Button
-                      variant="primary"
-                      className="w-100 mt-3 bg-warning"
+                      variant="warning"
+                      className="w-100 mt-2"
                       onClick={() => handleAddToCart(product)}
                     >
                       Add to Cart

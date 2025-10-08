@@ -25,13 +25,12 @@ const AddToCart = () => {
           Your cart is empty. Go to <a href="/">Products</a> to add items!
         </p>
       ) : (
-        <Button
-          className="btn btn-primary mb-3 mt-3 ms-3"
-          as={Link}
+        <Link
           to="/checkout"
+          className="btn btn-primary mb-3 mt-3 ms-3 text-decoration-none"
         >
           Proceed to checkout ({cartItemCount} items)
-        </Button>
+        </Link>
       )}
 
       <ul style={{ listStyleType: "none", padding: 5 }}>
