@@ -1,9 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { CardBody, OverlayTrigger, Tooltip } from "react-bootstrap";
+import { CardBody } from "react-bootstrap";
+import { useDispatch, useSelector } from "react-redux";
+import { addToCart } from "../Redux./cartSlice";
 import ProductRating from "./ProductRating.tsx";
 import { Container, Row, Col, Card, ListGroup, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import type { AppDispatch, RootState } from "../Redux./store.ts";
+
+//This component fetches and displays a list of products based on the selected category.
 
 // Interface for ProductCatalog component props
 interface productProps {
@@ -29,10 +34,10 @@ type Product = {
 const fetchProducts = async (category: string): Promise<Product[]> => {
   const URL =
     category === "all"
-      ? "https://fakestoreapi.com/products" // fetch all products
+      ? "https://fakestoreapi.com/products"
       : `https://fakestoreapi.com/products/category/${encodeURIComponent(
           category
-        )}`; // fetch products by category
+        )}`;
   const response = await axios.get(URL);
   return response.data;
 };
@@ -40,18 +45,33 @@ const fetchProducts = async (category: string): Promise<Product[]> => {
 // Using `useQuery` to fetch GET, Handles caching, background refetch, retries for you.
 // also, returns data, isLoading and error and receives props from App.tsx
 const ProductCatalog: React.FC<productProps> = ({ selectedCategory }) => {
+  const dispatch = useDispatch<AppDispatch>();
+
   const {
-    data = [],
+    data = [], // default to empty array to avoid undefined errors
     isLoading,
     error,
   } = useQuery<Product[]>({
-    //A unique identifier for query, React Query uses this to know what data is being cached
-    queryKey: ["products", selectedCategory],
-    queryFn: () => fetchProducts(selectedCategory), //function to run fetchPosts.
+    queryKey: ["products", selectedCategory], // Unique key for the query to cache results
+    queryFn: () => fetchProducts(selectedCategory), //function to run fetchPosts using the selected category
   });
 
+  // displaying loading and error states
   if (isLoading) return <p>Loading products...</p>;
   if (error) return <p>Error loading products</p>;
+
+  // Handle adding product to cart
+  const handleAddToCart = (product: Product) => {
+    dispatch(
+      addToCart({
+        id: product.id,
+        title: product.title,
+        price: product.price,
+        image: product.image,
+        quantity: 1,
+      })
+    );
+  };
 
   return (
     <>
@@ -78,29 +98,28 @@ const ProductCatalog: React.FC<productProps> = ({ selectedCategory }) => {
                     }}
                   />
 
-                  <OverlayTrigger
-                    trigger={["hover", "focus"]}
-                    placement="top"
-                    delay={{ show: 150, hide: 100 }}
-                    containerPadding={8}
-                    overlay={
-                      <Tooltip id={`desc-tip-${product.id}`}>
-                        <div className="fw-semibold mb-1">{product.title}</div>
-                        <div style={{ whiteSpace: "normal", maxWidth: 320 }}>
-                          {product.description}
-                        </div>
-                      </Tooltip>
-                    }
-                  >
-                    <Card.Body tabIndex={0}>
-                      <Card.Title className="ellipsis1">
-                        {product.title}
-                      </Card.Title>
-                      <Card.Text className="ellipsis">
+                  {/* <OverlayTrigger
+                  trigger={["hover", "focus"]}
+                  placement="top"
+                  delay={{ show: 150, hide: 100 }}
+                  containerPadding={8}
+                  overlay={
+                    <Tooltip id={`desc-tip-${product.id}`}>
+                      <div className="fw-semibold mb-1">{product.title}</div>
+                      <div style={{ whiteSpace: "normal", maxWidth: 320 }}>
                         {product.description}
-                      </Card.Text>
-                    </Card.Body>
-                  </OverlayTrigger>
+                      </div>
+                    </Tooltip>
+                  }
+                  ></OverlayTrigger> */}
+                  <Card.Body tabIndex={0}>
+                    <Card.Title className="ellipsis1">
+                      {product.title}
+                    </Card.Title>
+                    <Card.Text className="ellipsis">
+                      {product.description}
+                    </Card.Text>
+                  </Card.Body>
 
                   <ListGroup className="list-group-flush">
                     <ListGroup.Item className="text-success fw-bold fs-5 text-center">
@@ -109,7 +128,7 @@ const ProductCatalog: React.FC<productProps> = ({ selectedCategory }) => {
                     <ListGroup.Item>
                       <ProductRating
                         value={product.rating.rate}
-                        count={product.rating.count}
+                        count={`${product.rating.count} reviews`}
                       />
                     </ListGroup.Item>
                   </ListGroup>
@@ -121,6 +140,13 @@ const ProductCatalog: React.FC<productProps> = ({ selectedCategory }) => {
                       to={`/product/${product.id}`}
                     >
                       View Details
+                    </Button>
+                    <Button
+                      variant="primary"
+                      className="w-100 mt-3 bg-warning"
+                      onClick={() => handleAddToCart(product)}
+                    >
+                      Add to Cart
                     </Button>
                   </CardBody>
                 </Card>

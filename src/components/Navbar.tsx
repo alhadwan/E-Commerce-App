@@ -5,7 +5,8 @@ import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { FaShoppingCart } from "react-icons/fa";
 import type { RootState } from "../Redux./store";
-// import "bootstrap-icons/font/bootstrap-icons.css";
+
+//This component displays the navigation bar with category selection and cart item count
 
 // Interface for Navbar component props
 interface NavbarProps {
@@ -13,7 +14,7 @@ interface NavbarProps {
   onChange: (category: string) => void;
 }
 
-// fetch user data
+// Function to fetch product categories from the API
 const fetchCategories = async () => {
   const response = await axios.get(
     `https://fakestoreapi.com/products/categories`
@@ -58,7 +59,11 @@ const Navbar: React.FC<NavbarProps> = ({
     <>
       <nav className="navbar navbar-expand-lg navbar-light bg-dark">
         <div className="container">
-          <span className="navbar-brand text-white">E-Commerce Store</span>
+          <span className="navbar-brand text-white">
+            <Link className="text-white text-decoration-none" to="/">
+              E-Commerce Store
+            </Link>
+          </span>
           <div className="navbar-nav">
             <div className="nav-item">
               <select

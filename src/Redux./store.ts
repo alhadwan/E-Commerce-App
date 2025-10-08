@@ -4,7 +4,7 @@ import cartReducer from "./cartSlice";
 // Configuring the Redux store with the cart reducer
 export const store = configureStore({
   reducer: {
-    cart: cartReducer,
+    cart: cartReducer, // Cart state management to be used in the app in the components
   },
 });
 

@@ -2,14 +2,17 @@ import React from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { addToCart } from "../Redux./cartSlice";
-import type { AppDispatch, RootState } from "../Redux./store";
+import type { AppDispatch } from "../Redux./store";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import ListGroup from "react-bootstrap/ListGroup";
 import ProductRating from "./ProductRating";
 import { Button } from "react-bootstrap";
+import { useState } from "react";
+
+// This component displays detailed information about a specific product and allows users to add it to their cart.
 
 // Product type
 type Product = {
@@ -35,25 +38,25 @@ const ProductDetail = () => {
   // Get the product ID from the URL parameters
   const { id } = useParams<{ id: string }>();
   const dispatch = useDispatch<AppDispatch>();
+  const [success, setSuccess] = useState(false);
 
-  // Get taxRate from Redux store
-  const taxRate = useSelector((state: RootState) => state.cart.taxRate);
-
-  // Fetch the specific product using the ID
+  // Fetch the specific product using the ID using React Query
   const {
     data: product,
     isLoading,
     error,
   } = useQuery<Product>({
-    queryKey: ["product", id], // Unique query key for the product
-    queryFn: () => fetchProduct(id!), // Non-null assertion since ID is required
-    enabled: !!id, // Only run query if ID exists
+    queryKey: ["product", id], // Unique key for the query to cache results
+    queryFn: () => fetchProduct(id!), // Fetch function to get product details
+    enabled: !!id, // Only run the query if ID is available
   });
 
+  // displaying loading and error states
   if (isLoading) return <p>Loading product details...</p>;
   if (error) return <p>Error loading product details</p>;
   if (!product) return <p>Product not found</p>;
 
+  // Handle adding product to cart
   const handleAddToCart = () => {
     dispatch(
       addToCart({
@@ -64,6 +67,10 @@ const ProductDetail = () => {
         quantity: 1,
       })
     );
+    setSuccess(true);
+    setTimeout(() => {
+      setSuccess(false);
+    }, 1000);
   };
   return (
     <div>
@@ -87,7 +94,7 @@ const ProductDetail = () => {
         <Col md={4} className="mt-4">
           <h1>{product.title}</h1>
           <p>{product.description}</p>
-          <p>Price: ${product.price}</p>
+          <p className="text-success">Price: ${product.price}</p>
           <p>Category: {product.category}</p>
           <p>
             <ProductRating
@@ -101,9 +108,7 @@ const ProductDetail = () => {
             <ListGroup.Item className="fw-bold fs-5">
               Item Price: ${product.price}
             </ListGroup.Item>
-            {/* <ListGroup.Item className="fw-bold fs-5">
-              Tax: ${(product.price * taxRate).toFixed(2)} (8%)
-            </ListGroup.Item> */}
+
             <ListGroup.Item className="text-success fw-bold fs-5">
               Total: ${product.price.toFixed(2)}
             </ListGroup.Item>
@@ -116,6 +121,9 @@ const ProductDetail = () => {
                 Add to Cart
               </Button>
             </ListGroup.Item>
+            {success && (
+              <p className="text-success">Item added to cart successfully!</p>
+            )}
           </ListGroup>
         </Col>
       </Row>

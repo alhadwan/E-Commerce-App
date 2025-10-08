@@ -1,9 +1,11 @@
-import React from "react";
+import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState, AppDispatch } from "../Redux./store.ts";
 import { Row, Col, ListGroup, Button } from "react-bootstrap";
 import { clearCart } from "../Redux./cartSlice.ts";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+
+//This component displays the order summary during checkout and allows users to place their order.
 
 const Checkout = () => {
   const cartItems = useSelector((state: RootState) => state.cart.items);
@@ -12,13 +14,19 @@ const Checkout = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
+  const [success, setSuccess] = useState(false);
+
+  // Calculate total price including tax
   const Total = cartItems.reduce((total, item) => {
     return total + item.price * item.quantity * (1 + taxRate);
   }, 0);
+
+  // Calculate item price before tax
   const itemPrice = cartItems.reduce((total, item) => {
     return total + item.price * item.quantity;
   }, 0);
 
+  // Handle placing the order
   const handlePlaceOrder = () => {
     // Generate order number before clearing cart
     const orderNumber = `#ORD-${Date.now()}`;
@@ -36,9 +44,17 @@ const Checkout = () => {
 
     // Clear cart after saving order
     dispatch(clearCart());
+    setSuccess(true);
 
-    // Navigate to order confirmation
-    navigate("/placeOrder");
+    // Hide success message after 2 seconds
+    setTimeout(() => {
+      setSuccess(false);
+    }, 2000);
+
+    // Navigate to order confirmation after 3 seconds
+    setTimeout(() => {
+      navigate("/placeOrder");
+    }, 3000);
   };
 
   return (
@@ -70,7 +86,7 @@ const Checkout = () => {
           </li>
         ))}
       </ul>
-      <Row>
+      <Row className="m-5">
         <Col md={12}>
           <ListGroup className="list-group-flush text-center">
             <ListGroup.Item className="fw-bold fs-5">
@@ -91,6 +107,9 @@ const Checkout = () => {
                 place order
               </Button>
             </ListGroup.Item>
+            {success && (
+              <p className="text-success fw-bold">Order placed successfully!</p>
+            )}
           </ListGroup>
         </Col>
       </Row>

@@ -1,7 +1,11 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Row, Col, ListGroup, Card } from "react-bootstrap";
 
-// Types
+// This component displays the order confirmation page after placing an order.
+// It uses sessionStorage to retrieve the last order details and shows them to the user.
+// since the cart is cleared after order placement.
+
+// Types for cart items and order data
 interface CartItem {
   id: number;
   title: string;
@@ -19,18 +23,14 @@ interface OrderData {
 }
 
 const PlaceOrder = () => {
-  // State for order data
   const [orderData, setOrderData] = useState<OrderData | null>(null);
 
+  // Load order data from sessionStorage
   useEffect(() => {
-    // Load order data from sessionStorage
     const savedOrder = sessionStorage.getItem("lastOrder");
 
     if (savedOrder) {
       setOrderData(JSON.parse(savedOrder));
-    } else {
-      // If no order data, redirect to cart
-      window.location.href = "/cart";
     }
   }, []);
 
@@ -39,14 +39,11 @@ const PlaceOrder = () => {
     return <div>Loading order details...</div>;
   }
 
+  // Format order date
   const orderDate = new Date(orderData.date);
   const year = orderDate.getFullYear();
   const month = orderDate.getMonth();
   const day = orderDate.getDate();
-
-  //   const itemPrice = cartItems.reduce((total, item) => {
-  //     return total + item.price * item.quantity;
-  //   }, 0);
 
   return (
     <div>

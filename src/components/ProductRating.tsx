@@ -1,9 +1,10 @@
 import React from 'react'
 import { FaStarHalfAlt, FaStar, FaRegStar } from 'react-icons/fa'
+
 // This function display the product rating icon according to its value
 type ProductRatingProps = {
   value: number;
-  count: number;
+  count: number | string;
 };
 
 const ProductRating = ({ value, count }: ProductRatingProps) => {

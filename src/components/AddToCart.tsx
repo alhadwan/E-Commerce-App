@@ -1,4 +1,3 @@
-import React from "react";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
@@ -7,12 +6,13 @@ import type { RootState, AppDispatch } from "../Redux./store.ts";
 import { removeFromCart, updateQuantity } from "../Redux./cartSlice.ts";
 import { Link } from "react-router-dom";
 
+// This component displays the items in the cart and allows users to proceed to checkout,
+// update item quantities, or remove items from the cart.
 const AddToCart = () => {
   const productItem = useSelector((state: RootState) => state.cart.items);
-  const taxRate = useSelector((state: RootState) => state.cart.taxRate);
-  console.log(productItem);
   const dispatch = useDispatch<AppDispatch>();
 
+  // Calculate total number of items in the cart
   const cartItemCount = productItem.reduce(
     (total, item) => total + item.quantity,
     0
@@ -20,28 +20,24 @@ const AddToCart = () => {
 
   return (
     <div>
-      <Button variant="primary" className="mb-3" as={Link} to="/">
-        back
-      </Button>
       {cartItemCount == 0 ? (
         <p>
           Your cart is empty. Go to <a href="/">Products</a> to add items!
         </p>
       ) : (
-        <Button as={Link} to="/checkout">
+        <Button
+          className="btn btn-primary mb-3 mt-3 ms-3"
+          as={Link}
+          to="/checkout"
+        >
           Proceed to checkout ({cartItemCount} items)
         </Button>
       )}
 
-      {/* {productItem.length === 0 ? (
-        <p>
-          Your cart is empty. Go to <a href="/">Products</a> to add items!
-        </p>
-      ) : ( */}
       <ul style={{ listStyleType: "none", padding: 5 }}>
         {productItem.map((item) => (
           <li key={item.id}>
-            <Row>
+            <Row className="ms-3 mb-3">
               <Col md={3}>
                 <img
                   className="img-fluid "
@@ -101,7 +97,6 @@ const AddToCart = () => {
           </li>
         ))}
       </ul>
-      {/* )} */}
     </div>
   );
 };
