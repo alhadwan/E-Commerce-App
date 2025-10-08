@@ -4,7 +4,7 @@ e-commerce web application built with React, TypeScript, Redux Toolkit, and Reac
 
 ## Live Demo
 
-[Add your deployed app link here]
+
 
 ### Features
 
