@@ -7,11 +7,13 @@ import Form from "react-bootstrap/Form";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
+//defining the structure of the login form data
 interface LoginForm {
   email: string;
   password: string;
 }
 
+// This component handles user login functionality
 const Login = () => {
   const navigate = useNavigate();
   const [form, setForm] = useState<LoginForm>({
@@ -21,7 +23,7 @@ const Login = () => {
 
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<boolean>(false);
-
+  // This function updates form state on input change
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setForm({
@@ -29,20 +31,17 @@ const Login = () => {
       [name]: value,
     });
   };
-
+  // This function handles form submission and user login
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError(null);
     setSuccess(false);
 
     try {
-      // Use Firebase Auth to login (Firebase handles password verification)
+      // Use Firebase Auth to login
       await signInWithEmailAndPassword(auth, form.email, form.password);
-
       setSuccess(true);
       setForm({ email: "", password: "" });
-
-      // Navigate to main app after successful login
       navigate("/");
     } catch (error) {
       console.error("Error signing in: ", error);
@@ -56,7 +55,10 @@ const Login = () => {
 
   return (
     <div>
-      <Form onSubmit={handleSubmit}>
+      <Form
+        onSubmit={handleSubmit}
+        className="d-flex flex-column align-items-center justify-content-center vh-100"
+      >
         <Form.Group className="mb-3" controlId="formBasicEmail">
           <Form.Label>Email address</Form.Label>
           <Form.Control

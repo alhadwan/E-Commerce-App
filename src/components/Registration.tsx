@@ -22,6 +22,7 @@ interface RegistrationForm {
   password: string;
 }
 
+// This component handles user registration functionality
 const Registration = () => {
   const navigate = useNavigate();
   const [form, setForm] = useState<RegistrationForm>({
@@ -33,6 +34,7 @@ const Registration = () => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<boolean>(false);
 
+  // This function updates form state on input change
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setForm({
@@ -41,13 +43,14 @@ const Registration = () => {
     });
   };
 
+  // This function handles form submission and user registration
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError(null);
     setSuccess(false);
 
     try {
-      // Step 1: Create user with Firebase Auth (handles password securely)
+      // Create user with Firebase Auth
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         form.email,
@@ -55,7 +58,7 @@ const Registration = () => {
       );
       const user = userCredential.user;
 
-      // Step 2: Store additional user profile in Firestore (NO password!)
+      // Store additional user profile in Firestore not including password
       const userProfile: UserProfile = {
         uid: user.uid,
         name: form.name,
@@ -64,10 +67,8 @@ const Registration = () => {
       };
       // Use user.uid as the document ID to ensure uniqueness and easy retrieval
       await setDoc(doc(db, "users", user.uid), userProfile);
-
       setSuccess(true);
       setForm({ email: "", password: "", name: "" });
-      // Navigate to main app after successful login
       navigate("/");
     } catch (error) {
       console.error("Error creating user: ", error);
@@ -81,7 +82,10 @@ const Registration = () => {
 
   return (
     <div>
-      <Form onSubmit={handleSubmit}>
+      <Form
+        onSubmit={handleSubmit}
+        className="d-flex flex-column align-items-center justify-content-center vh-100"
+      >
         <Form.Group className="mb-3" controlId="formBasicName">
           <Form.Label>Name</Form.Label>
           <Form.Control

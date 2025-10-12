@@ -9,6 +9,7 @@ import Checkout from "./components/Checkout";
 import PlaceOrder from "./components/placeOrder";
 import Login from "./components/Login";
 import Registration from "./components/Registration";
+import Profile from "./components/profile";
 import { useAuth } from "./hooks/useAuth";
 
 function App() {
@@ -43,6 +44,7 @@ function App() {
         />
         <Route path="/cart" element={<AddToCart />} />
         <Route path="/placeOrder" element={<PlaceOrder />} />
+        <Route path="/profile" element={<Profile />} />
       </Routes>
     </>
   );

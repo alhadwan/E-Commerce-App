@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { FaShoppingCart } from "react-icons/fa";
 import type { RootState } from "../Redux./store";
-import { signOut} from "firebase/auth";
+import { signOut } from "firebase/auth";
 import { auth } from "../firebaseConfig";
 import Button from "react-bootstrap/esm/Button";
 import { useState } from "react";
@@ -26,7 +26,7 @@ const fetchCategories = async () => {
 };
 
 // Navbar component which receives props from app.tsx and fetches categories
-const Navbar: React.FC<NavbarProps> = ({ category, onChange}) => {
+const Navbar: React.FC<NavbarProps> = ({ category, onChange }) => {
   // Get cart items count from Redux store
   const cartItems = useSelector((state: RootState) => state.cart.items);
   const cartItemCount = cartItems.reduce(
@@ -109,7 +109,20 @@ const Navbar: React.FC<NavbarProps> = ({ category, onChange}) => {
               </Link>
             </div>
             <div className="nav-item ms-3">
-              <Button onClick={handleLogout}>Logout</Button>
+              <Button
+                onClick={handleLogout}
+                className="bg-dark text-white border-1 border-white hover:bg-white hover:text-black"
+              >
+                Logout
+              </Button>
+            </div>
+            <div className="nav-item ms-3">
+              <Link
+                to="/profile"
+                className="btn btn-outline-light btn-hover-white"
+              >
+                Profile
+              </Link>
             </div>
           </div>
           {/* <div>
