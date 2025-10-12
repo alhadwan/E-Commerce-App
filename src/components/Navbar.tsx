@@ -5,7 +5,10 @@ import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { FaShoppingCart } from "react-icons/fa";
 import type { RootState } from "../Redux./store";
-
+import { signOut} from "firebase/auth";
+import { auth } from "../firebaseConfig";
+import Button from "react-bootstrap/esm/Button";
+import { useState } from "react";
 //This component displays the navigation bar with category selection and cart item count
 
 // Interface for Navbar component props
@@ -23,19 +26,14 @@ const fetchCategories = async () => {
 };
 
 // Navbar component which receives props from app.tsx and fetches categories
-const Navbar: React.FC<NavbarProps> = ({
-  category,
-  onChange,
-}: {
-  category: string;
-  onChange: (category: string) => void;
-}) => {
+const Navbar: React.FC<NavbarProps> = ({ category, onChange}) => {
   // Get cart items count from Redux store
   const cartItems = useSelector((state: RootState) => state.cart.items);
   const cartItemCount = cartItems.reduce(
     (total, item) => total + item.quantity,
     0
   );
+  const [success, setSuccess] = useState<boolean>(false);
   // fetch categories data
   const {
     data: categories,
@@ -54,6 +52,19 @@ const Navbar: React.FC<NavbarProps> = ({
     return (
       <p>Error fetching categories: {(categoriesError as Error)?.message}</p>
     );
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      console.log("User signed out successfully");
+    } catch (error) {
+      console.error("Error signing out: ", error);
+    }
+    setInterval(() => {
+      setSuccess(false);
+    }, 3000);
+    setSuccess(true);
+  };
 
   return (
     <>
@@ -97,9 +108,20 @@ const Navbar: React.FC<NavbarProps> = ({
                 )}
               </Link>
             </div>
+            <div className="nav-item ms-3">
+              <Button onClick={handleLogout}>Logout</Button>
+            </div>
           </div>
+          {/* <div>
+            {users.map((user: User) => (
+              <div key={user.id}>
+                <p className="text-white">Hello, {user.email}</p>
+              </div>
+            ))}
+          </div> */}
         </div>
       </nav>
+      {success && <p className="text-success">Logout successfully</p>}
     </>
   );
 };

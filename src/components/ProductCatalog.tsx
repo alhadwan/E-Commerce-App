@@ -8,6 +8,7 @@ import { Container, Row, Col, Card, ListGroup, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import type { AppDispatch } from "../Redux./store.ts";
 
+
 //This component fetches and displays a list of products based on the selected category.
 
 // Interface for ProductCatalog component props
