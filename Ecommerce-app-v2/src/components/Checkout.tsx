@@ -1,11 +1,27 @@
 import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import type { RootState, AppDispatch } from "../Redux./store.ts";
-import { Row, Col, ListGroup, Button } from "react-bootstrap";
+import { Row, Col, Button } from "react-bootstrap";
 import { clearCart } from "../Redux./cartSlice.ts";
 import { useNavigate } from "react-router-dom";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import { db } from "../firebaseConfig.ts";
+import { useAuth } from "../hooks/useAuth";
 
 //This component displays the order summary during checkout and allows users to place their order.
+
+// Enhanced order data interface for Firestore
+// interface OrderData {
+//   orderNumber: string;
+//   items: CartItem[];
+//   total: number;
+//   itemPrice: number;
+//   taxRate: number;
+//   userId: string;          // Associate with authenticated user
+//   userEmail: string;       // User's email for reference
+//   timestamp: Timestamp;    // Server-side timestamp
+//   status: string;          // Order status (pending, processing, shipped, delivered)
+// }
 
 const Checkout = () => {
   const cartItems = useSelector((state: RootState) => state.cart.items);
@@ -13,6 +29,7 @@ const Checkout = () => {
 
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
+  const { user } = useAuth(); // Get current authenticated user
 
   const [success, setSuccess] = useState(false);
 
@@ -27,90 +44,140 @@ const Checkout = () => {
   }, 0);
 
   // Handle placing the order
-  const handlePlaceOrder = () => {
-    // Generate order number before clearing cart
-    const orderNumber = `#ORD-${Date.now()}`;
+  const handlePlaceOrder = async () => {
+    if (!user) {
+      console.error("User not authenticated");
+      return;
+    }
 
-    // Save order data to sessionStorage before clearing cart
-    const orderData = {
-      orderNumber,
-      items: cartItems,
-      total: Total,
-      date: new Date().toISOString(),
-      taxRate,
-    };
+    try {
+      // Generate order number before clearing cart
+      const orderNumber = `#ORD-${Date.now()}`;
 
-    sessionStorage.setItem("lastOrder", JSON.stringify(orderData));
+      // Prepare order data
+      const orderData = {
+        orderNumber,
+        items: cartItems,
+        total: Total,
+        itemPrice,
+        taxRate,
+        userId: user.uid,
+        userEmail: user.email,
+        timestamp: serverTimestamp(),
+      };
 
-    // Clear cart after saving order
-    dispatch(clearCart());
-    setSuccess(true);
+      // Save order to Firestore before clearing cart
+      const docRef = await addDoc(collection(db, "orders"), orderData);
+      console.log("Order saved to Firestore with ID:", docRef.id);
 
-    // Hide success message after 2 seconds
-    setTimeout(() => {
-      setSuccess(false);
-    }, 2000);
+      // Clear cart after saving order
+      dispatch(clearCart());
+      setSuccess(true);
 
-    // Navigate to order confirmation after 3 seconds
-    setTimeout(() => {
-      navigate("/placeOrder");
-    }, 3000);
+      // Hide success message after 2 seconds
+      setTimeout(() => {
+        setSuccess(false);
+      }, 2000);
+
+      // Navigate to order confirmation after 3 seconds
+      setTimeout(() => {
+        navigate("/placeOrder");
+      }, 3000);
+    } catch (error) {
+      console.error("Error placing order:", error);
+      // You could show an error message to the user here
+    }
   };
 
   return (
     <div>
-      <h1 className="text-center mt-3 mb-3">Order Summary</h1>
-      <ul>
-        {cartItems.map((item) => (
-          <li key={item.id} className="list-unstyled mb-3">
-            <Row>
-              <Col md={3}>
-                <img
-                  className="img-fluid "
-                  style={{
-                    height: "100px",
-                    width: "100px",
-                    objectFit: "contain",
-                    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
-                  }}
-                  src={item.image}
-                  alt={item.title}
-                />
-              </Col>
-              <Col md={3} className="fw-bold fs-5 mt-2">
-                {item.title} -{" "}
-                {item.quantity && `$${(item.price * item.quantity).toFixed(2)}`}{" "}
-                X {item.quantity}
-              </Col>
-            </Row>
-          </li>
-        ))}
-      </ul>
+      {/* <h1 className="text-center mt-3 mb-3">Order Summary</h1> */}
       <Row className="m-5">
-        <Col md={12}>
-          <ListGroup className="list-group-flush text-center">
-            <ListGroup.Item className="fw-bold fs-5">
-              Item Price: ${itemPrice.toFixed(2)}
-            </ListGroup.Item>
-            <ListGroup.Item className="fw-bold fs-5">
-              Tax: ${(Total * taxRate).toFixed(2)} (8%)
-            </ListGroup.Item>
-            <ListGroup.Item className="text-success fw-bold fs-5">
-              Total: ${Total.toFixed(2)}
-            </ListGroup.Item>
-            <ListGroup.Item>
+        <Col md={8}>
+          <div className="mb-4">
+            <h3 className="mb-3">Order Items ({cartItems.length})</h3>
+            {cartItems.map((item) => (
+              <div key={item.id} className="card mb-3 shadow-sm">
+                <div className="card-body">
+                  <Row className="align-items-center">
+                    <Col md={3}>
+                      <img
+                        className="img-fluid rounded"
+                        style={{
+                          height: "80px",
+                          width: "80px",
+                          objectFit: "contain",
+                        }}
+                        src={item.image}
+                        alt={item.title}
+                        onError={(e) => {
+                          (e.currentTarget as HTMLImageElement).src =
+                            "https://via.placeholder.com/80x80?text=No+Image";
+                        }}
+                      />
+                    </Col>
+                    <Col md={6}>
+                      <h6 className="card-title mb-1 text-truncate">
+                        {item.title}
+                      </h6>
+                      <p className="text-muted mb-1">
+                        ${item.price.toFixed(2)} each
+                      </p>
+                      <span className="badge bg-secondary">
+                        Qty: {item.quantity}
+                      </span>
+                    </Col>
+                    <Col md={3} className="text-end">
+                      <div className="fw-bold text-success fs-5">
+                        ${(item.price * item.quantity).toFixed(2)}
+                      </div>
+                      <small className="text-muted">
+                        {item.quantity} × ${item.price.toFixed(2)}
+                      </small>
+                    </Col>
+                  </Row>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Col>
+        <Col md={4}>
+          <div className="card shadow-sm sticky-top" style={{ top: "20px" }}>
+            <div className="card-header bg-primary text-white">
+              <h5 className="mb-0">Order Summary</h5>
+            </div>
+            <div className="card-body">
+              <div className="d-flex justify-content-between mb-2">
+                <span>Subtotal ({cartItems.length} items):</span>
+                <span>${itemPrice.toFixed(2)}</span>
+              </div>
+              <div className="d-flex justify-content-between mb-2">
+                <span>Tax (8%):</span>
+                <span>${(itemPrice * taxRate).toFixed(2)}</span>
+              </div>
+              <hr />
+              <div className="d-flex justify-content-between mb-3 fw-bold fs-5">
+                <span>Total:</span>
+                <span className="text-success">${Total.toFixed(2)}</span>
+              </div>
               <Button
-                variant="primary"
+                variant="success"
+                size="lg"
                 className="w-100"
                 onClick={handlePlaceOrder}
+                disabled={cartItems.length === 0}
               >
-                place order
+                <i className="fas fa-credit-card me-2"></i>
+                Place Order
               </Button>
-            </ListGroup.Item>
-            {success && (
-              <p className="text-success fw-bold">Order placed successfully!</p>
-            )}
-          </ListGroup>
+              {success && (
+                <div className="alert alert-success mt-3 mb-0">
+                  <i className="fas fa-check-circle me-2"></i>
+                  Order placed successfully!
+                </div>
+              )}
+            </div>
+          </div>
         </Col>
       </Row>
     </div>

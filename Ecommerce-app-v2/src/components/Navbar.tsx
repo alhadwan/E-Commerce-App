@@ -1,14 +1,13 @@
 import React from "react";
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { FaShoppingCart } from "react-icons/fa";
 import type { RootState } from "../Redux./store";
 import { signOut } from "firebase/auth";
-import { auth } from "../firebaseConfig";
+import { auth, db } from "../firebaseConfig";
 import Button from "react-bootstrap/esm/Button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { collection, getDocs } from "firebase/firestore";
 //This component displays the navigation bar with category selection and cart item count
 
 // Interface for Navbar component props
@@ -18,12 +17,12 @@ interface NavbarProps {
 }
 
 // Function to fetch product categories from the API
-const fetchCategories = async () => {
-  const response = await axios.get(
-    `https://fakestoreapi.com/products/categories`
-  );
-  return response.data;
-};
+// const fetchCategories = async () => {
+//   const response = await axios.get(
+//     `https://fakestoreapi.com/products/categories`
+//   );
+//   return response.data;
+// };
 
 // Navbar component which receives props from app.tsx and fetches categories
 const Navbar: React.FC<NavbarProps> = ({ category, onChange }) => {
@@ -34,24 +33,22 @@ const Navbar: React.FC<NavbarProps> = ({ category, onChange }) => {
     0
   );
   const [success, setSuccess] = useState<boolean>(false);
-  // fetch categories data
-  const {
-    data: categories,
-    isLoading: isCategoriesLoading,
-    isError: isCategoriesError,
-    error: categoriesError,
-  } = useQuery({
-    queryKey: ["categories"],
-    queryFn: () => fetchCategories(),
-  });
+  const [categories, setCategories] = useState<string[]>([]);
 
-  // loading categories state
-  if (isCategoriesLoading) return <p>Loading Categories...</p>;
-  // handle error states
-  if (isCategoriesError)
-    return (
-      <p>Error fetching categories: {(categoriesError as Error)?.message}</p>
-    );
+  // Fetch categories from Firestore
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, "categories"));
+        const categoryNames = querySnapshot.docs.map((doc) => doc.data().name);
+        setCategories(categoryNames);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   const handleLogout = async () => {
     try {

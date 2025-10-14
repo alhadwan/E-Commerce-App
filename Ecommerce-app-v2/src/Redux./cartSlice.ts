@@ -2,8 +2,9 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
 // Define the CartItem and CartState types
+//dose this need to be the same as the product type in ProductList.tsx? //
 interface CartItem {
-  id: number;
+  id: string; // Changed to string for Firestore compatibility
   title: string;
   price: number;
   image: string;
@@ -16,18 +17,21 @@ interface CartState {
 }
 
 // Load cart from sessionStorage if available
-const loadCartFromStorage = (): CartItem[] => {
-  try {
-    const storedCart = sessionStorage.getItem("productItem");
-    return storedCart ? JSON.parse(storedCart) : [];
-  } catch {
-    return [];
-  }
-};
+// const loadCartFromStorage = (): CartItem[] => {
+//   try {
+//     //where dose the "productItem" comes from? //
+//     //
+//     const storedCart = sessionStorage.getItem("productItem");
+//     return storedCart ? JSON.parse(storedCart) : [];
+//   } catch {
+//     return [];
+//   }
+// };
 
 // initial cart state and tax rate
 const initialState: CartState = {
-  items: loadCartFromStorage(),
+  // items: loadCartFromStorage(),
+  items: [],
   taxRate: 0.08,
 };
 
@@ -46,19 +50,19 @@ const cartSlice = createSlice({
         state.items.push({ ...p, quantity: 1 });
       }
       // Sync to sessionStorage
-      sessionStorage.setItem("productItem", JSON.stringify(state.items));
-      console.log(p);
+      // sessionStorage.setItem("productItem", JSON.stringify(state.items));
+      // console.log(p);
     },
     // Remove a product from the cart by ID and sync to sessionStorage
-    removeFromCart: (state, action: PayloadAction<number>) => {
+    removeFromCart: (state, action: PayloadAction<string>) => {
       state.items = state.items.filter((item) => item.id !== action.payload);
       // Sync to sessionStorage
-      sessionStorage.setItem("productItem", JSON.stringify(state.items));
+      // sessionStorage.setItem("productItem", JSON.stringify(state.items));
     },
     // Update the quantity of a specific cart item and sync to sessionStorage
     updateQuantity: (
       state,
-      action: PayloadAction<{ id: number; quantity: number }>
+      action: PayloadAction<{ id: string; quantity: number }>
     ) => {
       const { id, quantity } = action.payload;
       const item = state.items.find((i) => i.id === id);
@@ -70,7 +74,7 @@ const cartSlice = createSlice({
         item.quantity = quantity; //Sets exact quantity
       }
       // Sync to sessionStorage
-      sessionStorage.setItem("productItem", JSON.stringify(state.items));
+      // sessionStorage.setItem("productItem", JSON.stringify(state.items));
     },
     // Set a new tax rate for the cart
     setTaxRate: (state, action: PayloadAction<number>) => {
@@ -80,7 +84,7 @@ const cartSlice = createSlice({
     // clearing the Redux state and sessionStorage
     clearCart: (state) => {
       state.items = [];
-      sessionStorage.removeItem("productItem");
+      // sessionStorage.removeItem("productItem");
     },
   },
 });

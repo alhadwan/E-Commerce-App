@@ -1,5 +1,15 @@
 import { useState, useEffect } from "react";
 import { Row, Col, ListGroup, Card } from "react-bootstrap";
+import { db } from "../firebaseConfig";
+import {
+  getDocs,
+  collection,
+  query,
+  where,
+  orderBy,
+  limit,
+} from "firebase/firestore";
+import { useAuth } from "../hooks/useAuth";
 
 // This component displays the order confirmation page after placing an order.
 // It uses sessionStorage to retrieve the last order details and shows them to the user.
@@ -7,7 +17,7 @@ import { Row, Col, ListGroup, Card } from "react-bootstrap";
 
 // Types for cart items and order data
 interface CartItem {
-  id: number;
+  id: string;
   title: string;
   price: number;
   image: string;
@@ -15,32 +25,89 @@ interface CartItem {
 }
 
 interface OrderData {
+  id?: string;
   orderNumber: string;
   items: CartItem[];
   total: number;
-  date: string;
+  itemPrice: number;
   taxRate: number;
+  userId: string;
+  userEmail: string;
+  userName: string;
+  timestamp: any;
 }
 
 const PlaceOrder = () => {
   const [orderData, setOrderData] = useState<OrderData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const { user } = useAuth();
 
-  // Load order data from sessionStorage
+  // Load the latest order data from Firestore for the current user
   useEffect(() => {
-    const savedOrder = sessionStorage.getItem("lastOrder");
+    const fetchLatestOrder = async () => {
+      if (!user) {
+        setError("User not authenticated");
+        setLoading(false);
+        return;
+      }
 
-    if (savedOrder) {
-      setOrderData(JSON.parse(savedOrder));
-    }
-  }, []);
+      try {
+        // Query to get the latest order for the current user
+        // Using the composite index: userId (ASC) + timestamp (DESC)
+        const ordersQuery = query(
+          collection(db, "orders"),
+          where("userId", "==", user.uid),
+          orderBy("timestamp", "desc"),
+          limit(1)
+        );
 
-  // If no order data, show loading or redirect
-  if (!orderData) {
-    return <div>Loading order details...</div>;
+        const querySnapshot = await getDocs(ordersQuery);
+
+        if (!querySnapshot.empty) {
+          const latestOrderDoc = querySnapshot.docs[0];
+          const orderData = {
+            id: latestOrderDoc.id,
+            ...latestOrderDoc.data(),
+          } as OrderData;
+
+          setOrderData(orderData);
+        } else {
+          setError("No orders found");
+        }
+      } catch (err) {
+        console.error("Error fetching order:", err);
+        setError("Failed to load order details");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchLatestOrder();
+  }, [user]);
+
+  // Handle loading state
+  if (loading) {
+    return <div className="text-center mt-5">Loading order details...</div>;
   }
 
-  // Format order date
-  const orderDate = new Date(orderData.date);
+  // Handle error state
+  if (error) {
+    return <div className="text-center mt-5 text-danger">Error: {error}</div>;
+  }
+
+  // Handle no order data
+  if (!orderData) {
+    return <div className="text-center mt-5">No order data found.</div>;
+  }
+
+  // Format order date from Firestore timestamp
+  let orderDate: Date;
+  if (orderData.timestamp && orderData.timestamp.toDate) {
+    orderDate = orderData.timestamp.toDate(); // Firestore timestamp
+  } else {
+    orderDate = new Date(); // Fallback to current date
+  }
+
   const year = orderDate.getFullYear();
   const month = orderDate.getMonth();
   const day = orderDate.getDate();

@@ -1,5 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import { useState, useEffect } from "react";
 import { CardBody } from "react-bootstrap";
 import { useDispatch } from "react-redux";
 import { addToCart } from "../Redux./cartSlice";
@@ -7,7 +6,8 @@ import ProductRating from "./ProductRating.tsx";
 import { Container, Row, Col, Card, ListGroup, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import type { AppDispatch } from "../Redux./store.ts";
-
+import { db } from "../firebaseConfig.ts";
+import { collection, getDocs } from "firebase/firestore";
 
 //This component fetches and displays a list of products based on the selected category.
 
@@ -18,7 +18,7 @@ interface productProps {
 
 // Interface for Product type
 type Product = {
-  id: number;
+  id?: string;
   title: string;
   description: string;
   rate: number;
@@ -32,40 +32,66 @@ type Product = {
 };
 
 // Function to fetch products based on selected category
-const fetchProducts = async (category: string): Promise<Product[]> => {
-  const URL =
-    category === "all"
-      ? "https://fakestoreapi.com/products"
-      : `https://fakestoreapi.com/products/category/${encodeURIComponent(
-          category
-        )}`;
-  const response = await axios.get(URL);
-  return response.data;
-};
+// const fetchProducts = async (category: string): Promise<Product[]> => {
+//   const URL =
+//     category === "all"
+//       ? "https://fakestoreapi.com/products"
+//       : `https://fakestoreapi.com/products/category/${encodeURIComponent(
+//           category
+//         )}`;
+//   const response = await axios.get(URL);
+//   return response.data;
+// };
 
 // Using `useQuery` to fetch GET, Handles caching, background refetch, retries for you.
 // also, returns data, isLoading and error and receives props from App.tsx
 const ProductCatalog: React.FC<productProps> = ({ selectedCategory }) => {
   const dispatch = useDispatch<AppDispatch>();
+  const [data, setData] = useState<Product[]>([]);
 
-  const {
-    data = [], // default to empty array to avoid undefined errors
-    isLoading,
-    error,
-  } = useQuery<Product[]>({
-    queryKey: ["products", selectedCategory], // Unique key for the query to cache results
-    queryFn: () => fetchProducts(selectedCategory), //function to run fetchPosts using the selected category
-  });
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, "products"));
+        const products = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        })) as Product[];
+
+        // Filter products by category if not "all"
+        const filteredProducts =
+          selectedCategory === "all"
+            ? products
+            : products.filter(
+                (product) => product.category === selectedCategory
+              );
+
+        setData(filteredProducts);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
+
+    fetchData();
+  }, [selectedCategory]); // Re-fetch when category changes
+  // const {
+  //   data = [], // default to empty array to avoid undefined errors
+  //   isLoading,
+  //   error,
+  // } = useQuery<Product[]>({
+  //   queryKey: ["products", selectedCategory], // Unique key for the query to cache results
+  //   queryFn: () => fetchProducts(selectedCategory), //function to run fetchPosts using the selected category
+  // });
 
   // displaying loading and error states
-  if (isLoading) return <p>Loading products...</p>;
-  if (error) return <p>Error loading products</p>;
+  // if (isLoading) return <p>Loading products...</p>;
+  // if (error) return <p>Error loading products</p>;
 
   // Handle adding product to cart
   const handleAddToCart = (product: Product) => {
     dispatch(
       addToCart({
-        id: product.id,
+        id: product.id as string, // Use string ID from Firestore
         title: product.title,
         price: product.price,
         image: product.image,
