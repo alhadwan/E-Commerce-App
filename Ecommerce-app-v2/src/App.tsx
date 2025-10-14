@@ -11,6 +11,8 @@ import Login from "./components/Login";
 import Registration from "./components/Registration";
 import Profile from "./components/profile";
 import { useAuth } from "./hooks/useAuth";
+import Orders from "./components/Orders";
+import DeleteAccount from "./components/DeleteAccount";
 // import seedProduct from "./seeder/seedProduct";
 // import seedCategories from "./seeder/seedCategoies";
 
@@ -73,6 +75,8 @@ function App() {
         <Route path="/cart" element={<AddToCart />} />
         <Route path="/placeOrder" element={<PlaceOrder />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/orders" element={<Orders />} />
+        <Route path="/delete-account" element={<DeleteAccount />} />
       </Routes>
     </>
   );

@@ -15,14 +15,14 @@ interface LoginForm {
 
 // This component handles user login functionality
 const Login = () => {
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<boolean>(false);
   const navigate = useNavigate();
   const [form, setForm] = useState<LoginForm>({
     email: "",
     password: "",
   });
 
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<boolean>(false);
   // This function updates form state on input change
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -59,6 +59,18 @@ const Login = () => {
         onSubmit={handleSubmit}
         className="d-flex flex-column align-items-center justify-content-center vh-100"
       >
+        {/* Error and Success Messages */}
+        {error && (
+          <div className="alert alert-danger mb-3" role="alert">
+            {error}
+          </div>
+        )}
+        {success && (
+          <div className="alert alert-success mb-3" role="alert">
+            Login successful!
+          </div>
+        )}
+
         <Form.Group className="mb-3" controlId="formBasicEmail">
           <Form.Label>Email address</Form.Label>
           <Form.Control
@@ -87,8 +99,6 @@ const Login = () => {
           Don't have an account? <Link to="/register">Register here</Link>
         </p>
       </Form>
-      {error && <p className="text-danger">{error}</p>}
-      {success && <p className="text-success">Login successful!</p>}
     </div>
   );
 };

@@ -8,6 +8,8 @@ import { auth, db } from "../firebaseConfig";
 import Button from "react-bootstrap/esm/Button";
 import { useState, useEffect } from "react";
 import { collection, getDocs } from "firebase/firestore";
+import DeleteAccount from "./DeleteAccount";
+
 //This component displays the navigation bar with category selection and cart item count
 
 // Interface for Navbar component props
@@ -121,14 +123,23 @@ const Navbar: React.FC<NavbarProps> = ({ category, onChange }) => {
                 Profile
               </Link>
             </div>
+            <div className="nav-item ms-3">
+              <Link
+                to="/orders"
+                className="btn btn-outline-light btn-hover-white"
+              >
+                Orders
+              </Link>
+            </div>
+            <div className="nav-item ms-3">
+              <Link
+                to="/delete-account"
+                className="btn btn-outline-danger btn-hover-white"
+              >
+                Delete Account
+              </Link>
+            </div>
           </div>
-          {/* <div>
-            {users.map((user: User) => (
-              <div key={user.id}>
-                <p className="text-white">Hello, {user.email}</p>
-              </div>
-            ))}
-          </div> */}
         </div>
       </nav>
       {success && <p className="text-success">Logout successfully</p>}

@@ -74,15 +74,9 @@ const Checkout = () => {
       dispatch(clearCart());
       setSuccess(true);
 
-      // Hide success message after 2 seconds
-      setTimeout(() => {
-        setSuccess(false);
-      }, 2000);
-
-      // Navigate to order confirmation after 3 seconds
-      setTimeout(() => {
-        navigate("/placeOrder");
-      }, 3000);
+      // Navigate immediately to order confirmation
+      // No setTimeout needed - order is already saved successfully
+      navigate("/placeOrder");
     } catch (error) {
       console.error("Error placing order:", error);
       // You could show an error message to the user here

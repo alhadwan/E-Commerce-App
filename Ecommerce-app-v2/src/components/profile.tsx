@@ -6,6 +6,7 @@ const Profile = () => {
   const { userProfile, loading, updateUser } = useAuth();
   const [newEmail, setNewEmail] = useState<string>("");
   const [newName, setNewName] = useState<string>("");
+  const [divToggle, setDivToggle] = useState<boolean>(false);
 
   if (loading) {
     return <div className="d-flex justify-content-center mt-5">Loading...</div>;
@@ -68,49 +69,58 @@ const Profile = () => {
         ) : (
           <div className="alert alert-info">Loading profile information...</div>
         )}
+        <Button
+          variant="primary"
+          className="mt-3"
+          onClick={() => setDivToggle(!divToggle)}
+        >
+          {divToggle ? "Update Form" : "Update Form"}
+        </Button>
       </div>
-      <div className="container mt-4">
-        <h3>Update Profile</h3>
-        <div className="mb-3">
-          <Form.Group>
-            <Form.Label>Update Name</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Enter new name"
-              value={newName}
-              onChange={(e) => setNewName(e.target.value)}
-            />
-          </Form.Group>
-          <Button
-            variant="primary"
-            onClick={handleUpdateName}
-            disabled={!newName.trim()}
-            className="mt-2"
-          >
-            Update Name
-          </Button>
-        </div>
+      {divToggle && (
+        <div className="container mt-4">
+          <h3>Update Profile</h3>
+          <div className="mb-3">
+            <Form.Group>
+              <Form.Label>Update Name</Form.Label>
+              <Form.Control
+                type="text"
+                placeholder="Enter new name"
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)}
+              />
+            </Form.Group>
+            <Button
+              variant="primary"
+              onClick={handleUpdateName}
+              disabled={!newName.trim()}
+              className="mt-2"
+            >
+              Update Name
+            </Button>
+          </div>
 
-        <div className="mb-3">
-          <Form.Group>
-            <Form.Label>Update Email</Form.Label>
-            <Form.Control
-              type="email"
-              placeholder="Enter new email"
-              value={newEmail}
-              onChange={(e) => setNewEmail(e.target.value)}
-            />
-          </Form.Group>
-          <Button
-            variant="primary"
-            onClick={handleUpdateEmail}
-            disabled={!newEmail.trim()}
-            className="mt-2"
-          >
-            Update Email
-          </Button>
+          <div className="mb-3">
+            <Form.Group>
+              <Form.Label>Update Email</Form.Label>
+              <Form.Control
+                type="email"
+                placeholder="Enter new email"
+                value={newEmail}
+                onChange={(e) => setNewEmail(e.target.value)}
+              />
+            </Form.Group>
+            <Button
+              variant="primary"
+              onClick={handleUpdateEmail}
+              disabled={!newEmail.trim()}
+              className="mt-2"
+            >
+              Update Email
+            </Button>
+          </div>
         </div>
-      </div>
+      )}
     </>
   );
 };

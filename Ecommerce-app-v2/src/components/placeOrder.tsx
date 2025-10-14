@@ -41,16 +41,25 @@ const PlaceOrder = () => {
   const [orderData, setOrderData] = useState<OrderData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
 
   // Load the latest order data from Firestore for the current user
   useEffect(() => {
     const fetchLatestOrder = async () => {
+      // Wait for authentication to complete before checking user to prevent race conditions
+      if (authLoading) {
+        console.log("🔄 PlaceOrder: Still loading authentication...");
+        return;
+      }
+
       if (!user) {
+        console.log("❌ PlaceOrder: User not authenticated after auth loading completed");
         setError("User not authenticated");
         setLoading(false);
         return;
       }
+
+      console.log("✅ PlaceOrder: User authenticated, fetching latest order for:", user.uid);
 
       try {
         // Query to get the latest order for the current user
@@ -83,9 +92,14 @@ const PlaceOrder = () => {
       }
     };
     fetchLatestOrder();
-  }, [user]);
+  }, [user, authLoading]);
 
-  // Handle loading state
+  // Handle authentication loading state
+  if (authLoading) {
+    return <div className="text-center mt-5">Verifying authentication...</div>;
+  }
+
+  // Handle order data loading state
   if (loading) {
     return <div className="text-center mt-5">Loading order details...</div>;
   }
