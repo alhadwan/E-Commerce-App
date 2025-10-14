@@ -1,0 +1,18 @@
+.ellipsis {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+
+  /* number of lines (custom property) */
+  -webkit-line-clamp: var(--lines, 5);
+  line-clamp: var(--lines, 5);
+
+  /* handle long words/URLs */
+  overflow-wrap: anywhere;
+}
+
+.ellipsis1 {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
