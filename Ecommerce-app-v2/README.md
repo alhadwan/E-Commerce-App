@@ -55,14 +55,6 @@ https://e-commerce-app-three-kohl.vercel.app/
 - **Orders** (`/orders`)
 - **Categories** (`/categories`)
 
-### Firebase Features Used
-
-- **Authentication**
-- **Firestore Database**
-- **Real-time Updates**
-- **Security Rules**
-- **Composite Indexes**
-
 ## Technologies Used
 
 ### Frontend
@@ -86,10 +78,6 @@ https://e-commerce-app-three-kohl.vercel.app/
 - **Bootstrap 5.3.8**
 - **React Icons 5.5.0**
 
-### Routing & HTTP
-
-- **React Router DOM 7.9.3**
-- **Axios 1.12.2**
 
 ## Project Structure
 
