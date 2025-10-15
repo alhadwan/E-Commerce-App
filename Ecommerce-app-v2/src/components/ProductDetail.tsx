@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { addToCart } from "../Redux./cartSlice";
 import type { AppDispatch } from "../Redux./store";
@@ -10,6 +10,7 @@ import { Button } from "react-bootstrap";
 import { useState, useEffect } from "react";
 import { db } from "../firebaseConfig";
 import { doc, getDoc } from "firebase/firestore";
+import DeleteProduct from "./DeleteProduct";
 
 // This component displays detailed information about a specific product and allows users to add it to their cart.
 
@@ -165,6 +166,13 @@ const ProductDetail = () => {
               >
                 Add to Cart
               </Button>
+              <Link
+                to={`/edit-product/${product.id}`}
+                className="btn btn-warning w-100 mt-2"
+              >
+                Edit Product
+              </Link>
+              <DeleteProduct />
             </ListGroup.Item>
             {success && (
               <p className="text-success">Item added to cart successfully!</p>

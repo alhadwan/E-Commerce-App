@@ -13,6 +13,9 @@ import Profile from "./components/profile";
 import { useAuth } from "./hooks/useAuth";
 import Orders from "./components/Orders";
 import DeleteAccount from "./components/DeleteAccount";
+import AddProduct from "./components/AddProduct";
+import EditProduct from "./components/EditProduct";
+import DeleteProduct from "./components/DeleteProduct";
 // import seedProduct from "./seeder/seedProduct";
 // import seedCategories from "./seeder/seedCategoies";
 
@@ -77,6 +80,9 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/orders" element={<Orders />} />
         <Route path="/delete-account" element={<DeleteAccount />} />
+        <Route path="/add-product" element={<AddProduct />} />
+        <Route path="/edit-product/:id" element={<EditProduct />} />
+        <Route path="/delete-product/:id" element={<DeleteProduct />} />
       </Routes>
     </>
   );
