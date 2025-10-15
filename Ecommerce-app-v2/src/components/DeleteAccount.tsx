@@ -19,6 +19,8 @@ import {
   getDocs,
 } from "firebase/firestore";
 
+// This component allows users to delete their account, including profile and order history, after re-authentication.
+
 const DeleteAccount = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { user, loading: authLoading } = useAuth();
@@ -26,6 +28,7 @@ const DeleteAccount = () => {
   const [deleting, setDeleting] = useState(false);
   const navigate = useNavigate();
 
+  // Handle account deletion
   const handleDeleteAccount = async () => {
     const confirmed = window.confirm(
       "Are you sure you want to delete your account? This action cannot be undone."
@@ -64,14 +67,14 @@ const DeleteAccount = () => {
       );
       const ordersSnapshot = await getDocs(ordersQuery);
 
-      // Delete all user's orders
+      // Delete all user's orders so we don't leave orphaned data
       const deletePromises = ordersSnapshot.docs.map((orderDoc) =>
         deleteDoc(doc(db, "orders", orderDoc.id))
       );
       await Promise.all(deletePromises);
       console.log("User orders deleted from Firestore");
 
-      // Clear Redux store (cart, etc.)
+      // Clear Redux store
       dispatch(clearCart());
       console.log("Redux store cleared");
 
@@ -79,10 +82,8 @@ const DeleteAccount = () => {
       await deleteDoc(doc(db, "users", user.uid));
       console.log("User profile deleted from Firestore");
 
-      // Delete Firebase Auth account
+      // lastly Delete Firebase Auth account
       await deleteUser(user);
-      console.log("Firebase Auth account deleted successfully");
-
       alert("Account successfully deleted.");
       navigate("/login");
     } catch (error: any) {

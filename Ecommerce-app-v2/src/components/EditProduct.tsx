@@ -75,6 +75,8 @@ const EditProduct = () => {
     fetchProduct();
   }, [id]);
 
+
+    // Handle form submission to update the product
   const handleClick = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -101,7 +103,7 @@ const EditProduct = () => {
       // Hide success message after 3 seconds and navigate back
       setTimeout(() => {
         setSuccess(false);
-        navigate("/"); // Navigate back to product catalog
+        navigate("/");
       }, 2000);
 
       console.log("Product updated successfully!");
@@ -111,6 +113,7 @@ const EditProduct = () => {
     }
   };
 
+  // Handle form input changes and parse numeric values
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -145,6 +148,7 @@ const EditProduct = () => {
     }
   };
   console.log(form);
+
   // Handle loading state
   if (loading) {
     return (
@@ -268,7 +272,7 @@ const EditProduct = () => {
               className="w-100 p-2"
               type="number"
               min={0}
-              max={5} // how to add float number?
+              max={5} 
               step={0.1} // Allow float numbers
               name="rating"
               id="rating"

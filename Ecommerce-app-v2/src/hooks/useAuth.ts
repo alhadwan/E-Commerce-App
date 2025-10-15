@@ -29,6 +29,8 @@ export const useAuth = (): AuthState => {
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
 
+
+  // Function to update user profile in Firestore and local state
   const updateUser = async (
     userId: string,
     updatedData: Partial<UserProfile>
@@ -40,6 +42,7 @@ export const useAuth = (): AuthState => {
       console.log("Firestore updated successfully");
 
       // Update local state immediately so UI updates
+      
       if (user && user.uid === userId) {
         setUserProfile((prev) => {
           const newProfile = prev ? { ...prev, ...updatedData } : null;
@@ -58,6 +61,7 @@ export const useAuth = (): AuthState => {
     }
   };
 
+// Listen for authentication state changes
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser); //it contain the user whoever signed in
@@ -81,5 +85,10 @@ export const useAuth = (): AuthState => {
     return () => unsubscribe();
   }, []);
 
+
+  // user: The currently authenticated user object (or null if not authenticated)
+  // userProfile: The user's profile data fetched from Firestore (or null if not available)
+  // loading: A boolean indicating if the authentication state is still being determined
+  // updateUser: A function to update the user's profile data in Firestore and local state
   return { user, userProfile, loading, updateUser };
 };

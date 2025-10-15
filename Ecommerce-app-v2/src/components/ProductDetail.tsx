@@ -27,14 +27,6 @@ type Product = {
     count: number;
   };
 };
-
-// Function to fetch a single product by ID
-
-// const fetchProduct = async (id: string): Promise<Product> => {
-//   const response = await axios.get(`https://fakestoreapi.com/products/${id}`);
-//   return response.data;
-// };
-
 const ProductDetail = () => {
   // Get the product ID from the URL parameters
   const { id } = useParams<{ id: string }>();
@@ -68,22 +60,6 @@ const ProductDetail = () => {
       fetchProductId(id);
     }
   }, [id]);
-
-  // Fetch the specific product using the ID using React Query
-  // const {
-  //   data: product,
-  //   isLoading,
-  //   error,
-  // } = useQuery<Product>({
-  //   queryKey: ["product", id], // Unique key for the query to cache results
-  //   queryFn: () => fetchProduct(id!), // Fetch function to get product details
-  //   enabled: !!id, // Only run the query if ID is available
-  // });
-
-  // displaying loading and error states
-  // if (isLoading) return <p>Loading product details...</p>;
-  // if (error) return <p>Error loading product details</p>;
-  // if (!product) return <p>Product not found</p>;
 
   // Handle adding product to cart
   const handleAddToCart = () => {

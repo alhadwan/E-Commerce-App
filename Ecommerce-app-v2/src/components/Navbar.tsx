@@ -8,7 +8,6 @@ import { auth, db } from "../firebaseConfig";
 import Button from "react-bootstrap/esm/Button";
 import { useState, useEffect } from "react";
 import { collection, getDocs } from "firebase/firestore";
-import AddProduct from "./AddProduct";
 
 //This component displays the navigation bar with category selection and cart item count
 
@@ -17,14 +16,6 @@ interface NavbarProps {
   category: string;
   onChange: (category: string) => void;
 }
-
-// Function to fetch product categories from the API
-// const fetchCategories = async () => {
-//   const response = await axios.get(
-//     `https://fakestoreapi.com/products/categories`
-//   );
-//   return response.data;
-// };
 
 // Navbar component which receives props from app.tsx and fetches categories
 const Navbar: React.FC<NavbarProps> = ({ category, onChange }) => {

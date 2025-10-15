@@ -9,7 +9,7 @@ import type { AppDispatch } from "../Redux./store.ts";
 import { db } from "../firebaseConfig.ts";
 import { collection, getDocs } from "firebase/firestore";
 
-//This component fetches and displays a list of products based on the selected category.
+// This component displays a catalog of products based on the selected category and allows users to add products to their cart.
 
 // Interface for ProductCatalog component props
 interface productProps {
@@ -30,18 +30,6 @@ type Product = {
     count: number;
   };
 };
-
-// Function to fetch products based on selected category
-// const fetchProducts = async (category: string): Promise<Product[]> => {
-//   const URL =
-//     category === "all"
-//       ? "https://fakestoreapi.com/products"
-//       : `https://fakestoreapi.com/products/category/${encodeURIComponent(
-//           category
-//         )}`;
-//   const response = await axios.get(URL);
-//   return response.data;
-// };
 
 // Using `useQuery` to fetch GET, Handles caching, background refetch, retries for you.
 // also, returns data, isLoading and error and receives props from App.tsx
@@ -74,18 +62,6 @@ const ProductCatalog: React.FC<productProps> = ({ selectedCategory }) => {
 
     fetchData();
   }, [selectedCategory]); // Re-fetch when category changes
-  // const {
-  //   data = [], // default to empty array to avoid undefined errors
-  //   isLoading,
-  //   error,
-  // } = useQuery<Product[]>({
-  //   queryKey: ["products", selectedCategory], // Unique key for the query to cache results
-  //   queryFn: () => fetchProducts(selectedCategory), //function to run fetchPosts using the selected category
-  // });
-
-  // displaying loading and error states
-  // if (isLoading) return <p>Loading products...</p>;
-  // if (error) return <p>Error loading products</p>;
 
   // Handle adding product to cart
   const handleAddToCart = (product: Product) => {
@@ -124,21 +100,6 @@ const ProductCatalog: React.FC<productProps> = ({ selectedCategory }) => {
                         "https://via.placeholder.com/300x300?text=No+Image";
                     }}
                   />
-
-                  {/* <OverlayTrigger
-                  trigger={["hover", "focus"]}
-                  placement="top"
-                  delay={{ show: 150, hide: 100 }}
-                  containerPadding={8}
-                  overlay={
-                    <Tooltip id={`desc-tip-${product.id}`}>
-                      <div className="fw-semibold mb-1">{product.title}</div>
-                      <div style={{ whiteSpace: "normal", maxWidth: 320 }}>
-                        {product.description}
-                      </div>
-                    </Tooltip>
-                  }
-                  ></OverlayTrigger> */}
                   <Card.Body tabIndex={0}>
                     <Card.Title className="ellipsis1">
                       {product.title}

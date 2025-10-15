@@ -10,19 +10,6 @@ import { useAuth } from "../hooks/useAuth";
 
 //This component displays the order summary during checkout and allows users to place their order.
 
-// Enhanced order data interface for Firestore
-// interface OrderData {
-//   orderNumber: string;
-//   items: CartItem[];
-//   total: number;
-//   itemPrice: number;
-//   taxRate: number;
-//   userId: string;          // Associate with authenticated user
-//   userEmail: string;       // User's email for reference
-//   timestamp: Timestamp;    // Server-side timestamp
-//   status: string;          // Order status (pending, processing, shipped, delivered)
-// }
-
 const Checkout = () => {
   const cartItems = useSelector((state: RootState) => state.cart.items);
   const taxRate = useSelector((state: RootState) => state.cart.taxRate);
@@ -73,19 +60,14 @@ const Checkout = () => {
       // Clear cart after saving order
       dispatch(clearCart());
       setSuccess(true);
-
-      // Navigate immediately to order confirmation
-      // No setTimeout needed - order is already saved successfully
       navigate("/placeOrder");
     } catch (error) {
       console.error("Error placing order:", error);
-      // You could show an error message to the user here
     }
   };
 
   return (
     <div>
-      {/* <h1 className="text-center mt-3 mb-3">Order Summary</h1> */}
       <Row className="m-5">
         <Col md={8}>
           <div className="mb-4">

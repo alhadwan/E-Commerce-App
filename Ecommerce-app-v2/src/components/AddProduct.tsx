@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { db } from "../firebaseConfig";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
-import { href } from "react-router-dom";
 
 // this component allows users to add a new product item to the product list
 
@@ -31,10 +30,10 @@ const AddProduct = () => {
     },
   });
 
+  // Handle form submission to add a new product
   const handleClick = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      // Add the product with a timestamp
       await addDoc(collection(db, "products"), {
         ...form,
         createdAt: serverTimestamp(),
@@ -64,6 +63,7 @@ const AddProduct = () => {
     }
   };
 
+  // Handle input changes and parse numeric values
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -164,7 +164,7 @@ const AddProduct = () => {
               placeholder="https://example.com/image.jpg"
               required
             />
-            {/* {form.image && (
+            {form.image && (
               <div className="mt-2 mb-2">
                 <img
                   src={form.image}
@@ -179,7 +179,7 @@ const AddProduct = () => {
                   }}
                 />
               </div>
-            )} */}
+            )}
             <br />
             <label htmlFor="rating">Rating: </label>
             <input

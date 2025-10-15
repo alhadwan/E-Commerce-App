@@ -1,90 +1,124 @@
 # E-Commerce React Application
 
-e-commerce web application built with React, TypeScript, Redux Toolkit, and React Query. This project includes state management, data fetching, routing, and persistent storage.
+A full-featured e-commerce web application built with React, TypeScript, Redux Toolkit, and Firebase. This project includes Firebase authentication, Firestore database, state management, routing, and complete CRUD operations for products and user management.
 
 ## Live Demo
 
 https://e-commerce-app-three-kohl.vercel.app/
 
-### Features
+## Features
 
-### ProductCatalog
+### Authentication & User Management
 
-- Fetches and displays products using React Query
-- Handles category filtering
-- Provides add-to-cart functionality
-- Implements image error handling
+- **Firebase Authentication**
+- **User Profiles**
+- **Account Management**
+- **Persistent Sessions**
 
-### Navbar
+### Product Management
 
-- Dynamic category dropdown from API
-- Real-time cart item count display
-- Navigation between application sections
+- **Product Catalog**
+- **Product Details**
+- **Add Product**
+- **Edit Product**
+- **Delete Product**
+- **Firebase Storage**
 
-### AddToCart (Shopping Cart)
+### Shopping Cart & Orders
 
-- Display cart items with images and details
-- Quantity increment/decrement controls
-- Remove items functionality
-- Cart total calculations
+- **Shopping Cart**
+- **Checkout Process**
+- **Order History**
+- **Order Confirmation**
+- **Cart Persistence**
 
-### Checkout
+### Additional Features
 
-- Order summary display
-- Tax calculations and total computation
-- Cart clearing and order processing
-- Navigation to order confirmation
+- **Responsive Design**
+- **Loading States**
+- **Error Handling**
+- **Type Safety**
+- **Real-time Updates**
 
-### PlaceOrder
+## Firebase Integration
 
-- Order confirmation details
-- Order number generation and persistence
-- Final order summary display
+### Authentication
 
-### Error Handling
+- **Firebase Auth**
+- **User Sessions**
+- **Protected Routes**
 
-- Network error recovery with React Query retries
-- Image loading fallbacks for broken URLs
-- User-friendly error messages
+### Firestore Database Collections
 
-## API Integration
+- **Products** (`/products`)
+- **Users** (`/users`)
+- **Orders** (`/orders`)
+- **Categories** (`/categories`)
 
-### FakeStore API Endpoints
+### Firebase Features Used
 
-- `GET /products` - Fetch all products
-- `GET /products/categories` - Get product categories
-- `GET /products/category/{category}` - Get products by category
-- `GET /products/{id}` - Get individual product details
+- **Authentication**
+- **Firestore Database**
+- **Real-time Updates**
+- **Security Rules**
+- **Composite Indexes**
 
 ## Technologies Used
+
+### Frontend
 
 - **React 19.1.1**
 - **TypeScript**
 - **Vite**
 - **Redux Toolkit 2.9.0**
 - **React-Redux 9.2.0**
-- **TanStack React Query 5.90.2**
-- **Axios 1.12.2**
+
+### Backend & Database
+
+- **Firebase 12.4.0**
+- **Firebase Authentication**
+- **Firestore Database**
+- **Firebase Security Rules**
+
+### UI & Styling
+
 - **React Bootstrap 2.10.10**
 - **Bootstrap 5.3.8**
 - **React Icons 5.5.0**
+
+### Routing & HTTP
+
 - **React Router DOM 7.9.3**
+- **Axios 1.12.2**
 
 ## Project Structure
 
 ```
 src/
 ├── components/
+│   ├── AddProduct.tsx
 │   ├── AddToCart.tsx
 │   ├── Checkout.tsx
+│   ├── DeleteAccount.tsx
+│   ├── DeleteProduct.tsx
+│   ├── EditProduct.tsx
+│   ├── Login.tsx
 │   ├── Navbar.tsx
-│   ├── PlaceOrder.tsx
+│   ├── Orders.tsx
 │   ├── ProductCatalog.tsx
 │   ├── ProductDetail.tsx
-│   └── ProductRating.tsx
+│   ├── ProductRating.tsx
+│   ├── Registration.tsx
+│   ├── placeOrder.tsx
+│   └── profile.tsx
 ├── Redux/
 │   ├── store.ts
 │   └── cartSlice.ts
+├── hooks/
+│   └── useAuth.ts
+├── seeder/
+│   └── [seeder files]
+├── firebaseConfig.ts
 ├── App.tsx
 ├── main.tsx
 └── App.css
@@ -96,14 +130,15 @@ src/
 
 - Node.js (v18 or higher)
 - npm or yarn package manager
+- Firebase account for backend services
 
 ### Installation Steps
 
 1. **Clone the repository**
 
    ```bash
-   git clone [https://github.com/alhadwan/E-Commerce-App.git]
-   cd ecommerce-app-project
+   git clone https://github.com/alhadwan/E-Commerce-App.git
+   cd E-Commerce-App
    ```
 
 2. **Install dependencies**
@@ -112,19 +147,36 @@ src/
    npm install
    ```
 
-3. **Start development server**
+3. **Firebase Configuration**
+   - Create a Firebase project at [Firebase Console](https://console.firebase.google.com/)
+   - Enable Authentication (Email/Password)
+   - Create Firestore Database
+   - Copy your Firebase config and update `src/firebaseConfig.ts`
+
+4. **Environment Setup**
+   - Configure Firebase settings in `firebaseConfig.ts`
+   - Ensure Firestore security rules are properly configured
+
+5. **Start development server**
 
    ```bash
    npm run dev
    ```
 
-4. **Build for production**
+6. **Build for production**
 
    ```bash
    npm run build
    ```
 
-5. **Preview production build**
+7. **Preview production build**
    ```bash
    npm run preview
    ```
+
+## Author
+
+**Ali Hadwan**
+
+- GitHub: [@alhadwan](https://github.com/alhadwan)
+- Project Link: [E-Commerce App](https://github.com/alhadwan/E-Commerce-App)

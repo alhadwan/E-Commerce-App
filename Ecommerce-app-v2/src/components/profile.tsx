@@ -2,6 +2,8 @@ import { useAuth } from "../hooks/useAuth";
 import { Card, ListGroup, Button, Form } from "react-bootstrap";
 import { useState } from "react";
 
+// This component displays the user's profile information and allows them to update their name and email.
+
 const Profile = () => {
   const { userProfile, loading, updateUser } = useAuth();
   const [newEmail, setNewEmail] = useState<string>("");
@@ -17,7 +19,7 @@ const Profile = () => {
 
     try {
       await updateUser(userProfile.uid, { name: newName });
-      setNewName(""); // Clear input after successful update
+      setNewName("");
       alert("Name updated successfully!");
     } catch (error) {
       console.error("Error updating name:", error);
@@ -29,7 +31,7 @@ const Profile = () => {
 
     try {
       await updateUser(userProfile.uid, { email: newEmail });
-      setNewEmail(""); // Clear input after successful update
+      setNewEmail(""); 
       alert("Email updated successfully!");
     } catch (error) {
       console.error("Error updating email:", error);

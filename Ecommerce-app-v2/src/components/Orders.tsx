@@ -5,6 +5,8 @@ import { useAuth } from "../hooks/useAuth";
 import Row from "react-bootstrap/esm/Row";
 import Col from "react-bootstrap/esm/Col";
 
+// This component displays a list of past orders for the authenticated user.
+
 interface orderItem {
   id: string;
   title: string;
@@ -57,8 +59,8 @@ const Orders = () => {
           orderBy("timestamp", "desc")
         );
 
+        // Execute the query
         const querySnapshot = await getDocs(ordersQuery);
-
         if (!querySnapshot.empty) {
           const ordersData = querySnapshot.docs.map((doc) => ({
             id: doc.id,
