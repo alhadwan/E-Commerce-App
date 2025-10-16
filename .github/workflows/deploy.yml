@@ -1,0 +1,76 @@
+name: Vercel Deployment
+
+env:
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+# Run the workflow on pushes and pull requests
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  # CI Job: Build and Test
+  build-and-test:
+    runs-on: ubuntu-latest
+    name: Build and Test
+
+    steps:
+      # Step 1: Checkout the repository code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: Set up Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
+          cache-dependency-path: "Ecommerce-app-v2/package-lock.json"
+
+      # Step 3: Install dependencies
+      - name: Install dependencies
+        run: npm ci
+        working-directory: ./Ecommerce-app-v2
+
+      # Step 4: Build the project
+      - name: Build project
+        run: npm run build
+        working-directory: ./Ecommerce-app-v2
+
+      # Step 5: Run tests
+      - name: Run tests
+        run: npm test -- --watchAll=false --coverage
+        working-directory: ./Ecommerce-app-v2
+
+      # Step 6: Upload build artifacts (optional)
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-files
+          path: Ecommerce-app-v2/dist/
+
+  # CD Job: Deploy to Vercel (only runs after tests pass)
+  deploy:
+    runs-on: ubuntu-latest
+    name: Deploy to Vercel
+    needs: build-and-test # Only runs if build-and-test job succeeds
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push' # Only deploy on main branch pushes
+
+    steps:
+      # Step 1: Checkout the repository code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: Deploy to Vercel
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          working-directory: ./Ecommerce-app-v2
