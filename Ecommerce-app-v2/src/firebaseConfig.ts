@@ -13,6 +13,13 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
+// Debug: Log the config to see what's actually loaded (remove after testing)
+console.log("Firebase Config:", {
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY ? "Found" : "Missing",
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN ? "Found" : "Missing",
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID ? "Found" : "Missing",
+});
+
 // Initialize Firebase
 const app = initializeApp(firebaseConfig); //Creates and initializes a Firebase app instance using the provided configuration object
 const auth: Auth = getAuth(app); //Initializes and retrieves the Firebase Authentication service associated with the app instance
