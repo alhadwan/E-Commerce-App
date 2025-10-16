@@ -30,7 +30,7 @@ jobs:
         with:
           node-version: "18"
           cache: "npm"
-          cache-dependency-path: "Ecommerce-app-v2/package-lock.json"
+          cache-dependency-path: "./Ecommerce-app-v2/package-lock.json"
 
       # Step 3: Install dependencies
       - name: Install dependencies
