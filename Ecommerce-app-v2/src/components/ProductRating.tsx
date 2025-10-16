@@ -1,8 +1,6 @@
 import { FaStarHalfAlt, FaStar, FaRegStar } from "react-icons/fa";
 
-// FaStar = full ⭐
-// FaStarHalfAlt = half ⭐
-// FaRegStar = empty ☆
+// FaStar = full ⭐, FaStarHalfAlt = half ⭐, FaRegStar = empty ☆
 
 // This function display the product rating icon according to its value
 type ProductRatingProps = {
