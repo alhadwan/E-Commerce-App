@@ -97,8 +97,6 @@ describe("ProductCatalog Component", () => {
   });
 
   it("navigates to product detail when View Details is clicked", async () => {
-    const user = userEvent.setup();
-
     render(
       <Provider store={store}>
         <BrowserRouter>
