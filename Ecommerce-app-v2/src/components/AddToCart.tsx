@@ -9,7 +9,6 @@ import { Link } from "react-router-dom";
 
 const AddToCart = () => {
   const cartItems = useSelector((state: RootState) => state.cart.items);
-  const taxRate = useSelector((state: RootState) => state.cart.taxRate);
   const dispatch = useDispatch<AppDispatch>();
 
   // Calculate total number of items in the cart
@@ -22,9 +21,6 @@ const AddToCart = () => {
   const itemPrice = cartItems.reduce((total, item) => {
     return total + item.price * item.quantity;
   }, 0);
-
-  // // Calculate total price including tax
-  // const totalPrice = itemPrice * (1 + taxRate);
 
   // Empty cart state
   if (cartItemCount === 0) {
