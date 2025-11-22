@@ -46,43 +46,41 @@ const Navbar: React.FC<NavbarProps> = ({ category, onChange }) => {
   const handleLogout = async () => {
     try {
       await signOut(auth);
-      console.log("User signed out successfully");
+      setSuccess(true);
+
+      setTimeout(() => {
+        setSuccess(false);
+      }, 3000);
     } catch (error) {
       console.error("Error signing out: ", error);
     }
-    setInterval(() => {
-      setSuccess(false);
-    }, 3000);
-    setSuccess(true);
   };
 
   return (
     <>
-      <nav className="navbar navbar-expand-lg navbar-light bg-dark">
+      <nav className="navbar navbar-dark bg-dark shadow-sm border-bottom border-secondary">
         <div className="container">
-          <span className="navbar-brand text-white">
-            <Link className="text-white text-decoration-none" to="/">
-              E-Commerce Store
-            </Link>
-          </span>
-          <div className="navbar-nav">
-            <div className="nav-item">
+          {/* Brand */}
+          <Link to="/" className="navbar-brand d-flex align-items-center">
+            <span className="fw-bold">EZCommerce</span>
+          </Link>
+          <div className=" d-flex align-items-center gap-3">
+            <div className="">
               <select
                 id="category-select"
-                className="form-select"
-                style={{ width: "200px" }}
+                className="form-select form-select-sm w-auto"
                 value={category}
                 onChange={(e) => onChange(e.target.value)}
               >
                 <option value="all">All Categories</option>
-                {categories.map((category: string) => (
-                  <option key={category} value={category}>
-                    {category}
+                {categories.map((cat) => (
+                  <option key={cat} value={cat}>
+                    {cat}
                   </option>
                 ))}
               </select>
             </div>
-            <div className="nav-item ms-3">
+            <div className="">
               <Link
                 to="/cart"
                 className="btn btn-outline-light position-relative"
@@ -98,44 +96,55 @@ const Navbar: React.FC<NavbarProps> = ({ category, onChange }) => {
                 )}
               </Link>
             </div>
-            <div className="nav-item ms-3">
-              <Button
-                onClick={handleLogout}
-                className="bg-dark text-white border-1 border-white hover:bg-white hover:text-black"
-              >
-                Logout
-              </Button>
+
+            {/* Toggler */}
+            <button
+              className="navbar-toggler"
+              type="button"
+              data-bs-toggle="offcanvas"
+              data-bs-target="#offcanvasNavbar"
+              aria-controls="offcanvasNavbar"
+              aria-label="Toggle navigation"
+            >
+              <span className="navbar-toggler-icon" />
+            </button>
+          </div>
+
+          {/* Offcanvas / Main menu */}
+          <div
+            className="offcanvas offcanvas-end"
+            tabIndex={-1}
+            id="offcanvasNavbar"
+            aria-labelledby="offcanvasNavbarLabel"
+          >
+            <div className="offcanvas-header bg-dark">
+              <button
+                type="button"
+                className="btn-close bg-light"
+                data-bs-dismiss="offcanvas"
+                aria-label="Close"
+              />
             </div>
-            <div className="nav-item ms-3">
-              <Link
-                to="/profile"
-                className="btn btn-outline-light btn-hover-white"
-              >
+
+            <div className="offcanvas-body margin-3 bg-dark d-flex flex-column align-items gap-4">
+              <Link to="/profile" className="btn btn-outline-light w-auto">
                 Profile
               </Link>
-            </div>
-            <div className="nav-item ms-3">
-              <Link
-                to="/orders"
-                className="btn btn-outline-light btn-hover-white"
-              >
+              <Link to="/orders" className="btn btn-outline-light">
                 Orders
               </Link>
-            </div>
-            <div className="nav-item ms-3">
-              <Link
-                to="/delete-account"
-                className="btn btn-outline-danger btn-hover-white"
-              >
-                Delete Account
-              </Link>
-            </div>
-            <div className="nav-item ms-3">
+              <Button variant="outline-light" size="sm" onClick={handleLogout}>
+                Logout
+              </Button>
+
               <Link
                 to="/add-product"
                 className="btn btn-outline-light btn-hover-white"
               >
                 Add Product
+              </Link>
+              <Link to="/delete-account" className="btn btn-outline-danger">
+                Delete Account
               </Link>
             </div>
           </div>

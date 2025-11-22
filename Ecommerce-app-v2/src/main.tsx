@@ -7,8 +7,11 @@ import { BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
 import { store } from "./Redux./store";
 
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.bundle.min.js";
+
 const queryClient = new QueryClient();
-// Setting up the React application with Redux for state management, 
+// Setting up the React application with Redux for state management,
 // React Query for data fetching and caching, and React Router for routing.
 createRoot(document.getElementById("root")!).render(
   <Provider store={store}>

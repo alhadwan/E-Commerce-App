@@ -23,17 +23,6 @@ function App() {
   const [category, setCategory] = useState("all");
   const { user, loading } = useAuth();
 
-  // // Seeder function
-  // const handleSeed = async () => {
-  //   try {
-  //     await seedCategories();
-
-  //     alert("Categories seeded to Firebase successfully!");
-  //   } catch (error) {
-  //     console.error("Error seeding categories:", error);
-  //   }
-  // };
-
   // Show loading spinner while checking auth
   if (loading) {
     return <div className="d-flex justify-content-center mt-5">Loading...</div>;
@@ -54,19 +43,6 @@ function App() {
   return (
     <>
       <Navbar category={category} onChange={setCategory} />
-
-      {/*SEEDER BUTTON*/}
-      {/* <div className="container mt-2">
-        <div className="alert alert-warning d-flex justify-content-between align-items-center">
-          <span>
-            <strong>Seeder:</strong> Seed products to Firebase (run only
-            once!)
-          </span>
-          <button onClick={handleSeed} className="btn btn-sm btn-primary">
-            Seed categories
-          </button>
-        </div>
-      </div> */}
 
       <Routes>
         <Route path="/checkout" element={<Checkout />} />
