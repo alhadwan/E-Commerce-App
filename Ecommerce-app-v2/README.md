@@ -32,6 +32,13 @@ https://e-commerce-app-three-kohl.vercel.app/
 - **Order Confirmation**
 - **Cart Persistence**
 
+### Admin Panel
+
+- **Admin Dashboard**
+  - Delete Products
+  - Edit Products
+  - Add Products
+
 ### Additional Features
 
 - **Responsive Design**
@@ -39,6 +46,9 @@ https://e-commerce-app-three-kohl.vercel.app/
 - **Error Handling**
 - **Type Safety**
 - **Real-time Updates**
+- **Theme Toggle (Light/Dark Mode)**
+- **Protected Routes**
+- **Automatic Logout after Inactivity**
 
 ## Firebase Integration
 
@@ -77,7 +87,6 @@ https://e-commerce-app-three-kohl.vercel.app/
 - **React Bootstrap 2.10.10**
 - **Bootstrap 5.3.8**
 - **React Icons 5.5.0**
-
 
 ## Project Structure
 
