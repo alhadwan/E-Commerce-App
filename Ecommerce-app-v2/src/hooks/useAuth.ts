@@ -68,7 +68,7 @@ export const useAuth = (): AuthState => {
     }
   };
 
-  // Listen for authentication state changes and get the user data for whoever is signed in.
+  // Listen for authentication state changes(user login/logout) and get the user data for whoever is signed in.
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser); //it contain the user whoever signed in
@@ -91,6 +91,48 @@ export const useAuth = (): AuthState => {
 
     return () => unsubscribe();
   }, []);
+
+  useEffect(() => {
+    if (!user) return; // exit the useeffect if there isnit user
+
+    let timer: ReturnType<typeof setTimeout>;
+    let warningTimer: ReturnType<typeof setTimeout>;
+
+    // function to clear the user logout when any event happen
+    const resetTimer = () => {
+      clearTimeout(timer);
+      clearTimeout(warningTimer);
+
+      // warn at 1 minutes
+      warningTimer = setTimeout(() => {
+        alert("You will be logged out in 1 minute due to inactivity.");
+      }, 60 * 1000);
+
+      // logout at 15 minutes
+      timer = setTimeout(
+        () => {
+          logout();
+        },
+        1 * 60 * 1000,
+      );
+    };
+
+    const events = [
+      "mousemove",
+      "mousedown",
+      "keydown",
+      "scroll",
+      "touchstart",
+    ];
+    events.forEach((e) => window.addEventListener(e, resetTimer));
+
+    resetTimer(); // start the timer immediately on login
+
+    return () => {
+      clearTimeout(timer);
+      events.forEach((e) => window.removeEventListener(e, resetTimer));
+    };
+  }, [user]); // re-run when user changes (login/logout)
 
   // user: The currently authenticated user object (or null if not authenticated)
   // userProfile: The user's profile data fetched from Firestore (or null if not available)
