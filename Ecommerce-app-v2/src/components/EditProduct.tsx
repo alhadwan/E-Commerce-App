@@ -45,8 +45,10 @@ const EditProduct = () => {
       }
 
       try {
-        const docRef = doc(db, "products", id);
-        const docSnap = await getDoc(docRef);
+        // Reference to the specific product document in Firestore 
+        // doc(Firestore instance (db), collection path ("products"), document ID (id)) 
+        const docRef = doc(db, "products", id); 
+        const docSnap = await getDoc(docRef); // Fetch the document snapshot from Firestore which contains the id, data and exists() method to check if the document exists
 
         if (docSnap.exists()) {
           const productData = docSnap.data();
@@ -86,7 +88,8 @@ const EditProduct = () => {
     }
 
     try {
-      await updateDoc(doc(db, "products", id), {
+      const docRef = doc(db, "products", id);
+      const updateData = {
         title: form.title,
         price: form.price,
         description: form.description,
@@ -96,8 +99,8 @@ const EditProduct = () => {
           rate: form.rating.rate,
           count: form.rating.count,
         },
-      });
-
+      };
+      await updateDoc(docRef, updateData)
       setSuccess(true);
 
       // Hide success message after 3 seconds and navigate back
@@ -118,7 +121,7 @@ const EditProduct = () => {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-
+    // Parse numeric values for price, rating.rate, and rating.count
     if (name === "price") {
       setForm((prevState) => ({
         ...prevState,
@@ -296,7 +299,7 @@ const EditProduct = () => {
               <button
                 type="button"
                 className="btn btn-secondary flex-fill p-2"
-                onClick={() => navigate("/")}
+                onClick={() => navigate(`/product/${id}`)}
               >
                 Cancel
               </button>

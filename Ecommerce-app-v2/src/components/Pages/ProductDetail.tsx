@@ -1,18 +1,18 @@
 import { Link, useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { addToCart } from "../Redux./cartSlice";
-import type { AppDispatch } from "../Redux./store";
+import { addToCart } from "../../Redux./cartSlice";
+import type { AppDispatch } from "../../Redux./store";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import ListGroup from "react-bootstrap/ListGroup";
-import ProductRating from "./ProductRating";
+import ProductRating from "../ProductRating";
 import { Button } from "react-bootstrap";
 import { useState, useEffect } from "react";
-import { db } from "../firebaseConfig";
+import { db } from "../../firebaseConfig";
 import { doc, getDoc } from "firebase/firestore";
-import DeleteProduct from "./DeleteProduct";
+import DeleteProduct from "../DeleteProduct";
 
-// This component displays detailed information about a specific product and allows users to add it to their cart.
+// This component displays detailed information about a specific product and allows users to add it to their cart also edit/delete product.
 
 // Product type
 type Product = {
@@ -40,14 +40,14 @@ const ProductDetail = () => {
       try {
         // fetching only the specific product
         const docRef = doc(db, "products", id);
-        const docSnap = await getDoc(docRef);
+        const docSnap = await getDoc(docRef); // docSnap has data, exists() and id properties
 
         if (docSnap.exists()) {
           const productData = {
             id: docSnap.id,
             ...docSnap.data(),
           } as Product;
-          setProduct(productData);
+          setProduct(productData); 
         } else {
           console.log("No such product!");
         }
@@ -71,7 +71,6 @@ const ProductDetail = () => {
         title: product.title,
         price: product.price,
         image: product.image,
-        quantity: 1,
       })
     );
     setSuccess(true);

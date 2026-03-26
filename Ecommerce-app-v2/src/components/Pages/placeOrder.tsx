@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Row, Col } from "react-bootstrap";
-import { db } from "../firebaseConfig";
+import { db } from "../../firebaseConfig";
 import {
   getDocs,
   collection,
@@ -9,12 +9,13 @@ import {
   orderBy,
   limit,
 } from "firebase/firestore";
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "../../hooks/useAuth";
 import { Link } from "react-router-dom";
 
 // This component displays the order confirmation page after placing an order.
-// It uses sessionStorage to retrieve the last order details and shows them to the user.
-// since the cart is cleared after order placement.
+// It fetches the latest order details for the authenticated user from Firestore 
+// and displays a summary of the order, including items, total price, and order date.
+
 
 // Types for cart items and order data
 interface CartItem {
@@ -59,8 +60,7 @@ const PlaceOrder = () => {
       }
 
       try {
-        // Query to get the latest order for the current user
-        // Using the composite index: userId (ASC) + timestamp (DESC)
+        // first: Query to get ALL orders for the current user, ordered by timestamp (newest first)
         const ordersQuery = query(
           collection(db, "orders"),
           where("userId", "==", user.uid),
@@ -68,9 +68,8 @@ const PlaceOrder = () => {
           limit(1)
         );
 
+        //second: Execute the query to get the latest order document for the user
         const querySnapshot = await getDocs(ordersQuery);
-
-        // Check if we got any results and extract the order data from the first document(orderby+limit)
         if (!querySnapshot.empty) {
           const latestOrderDoc = querySnapshot.docs[0];
           const orderData = {

@@ -10,23 +10,14 @@ interface CartItem {
   image: string;
   quantity: number;
 }
+
+type AddToCartPayload = Omit<CartItem, "quantity">;
+
 // setting the Items to an array of CartItem
 interface CartState {
   items: CartItem[];
   taxRate: number;
 }
-
-// Load cart from sessionStorage if available
-// const loadCartFromStorage = (): CartItem[] => {
-//   try {
-//     //where dose the "productItem" comes from? //
-//     //
-//     const storedCart = sessionStorage.getItem("productItem");
-//     return storedCart ? JSON.parse(storedCart) : [];
-//   } catch {
-//     return [];
-//   }
-// };
 
 // initial cart state and tax rate
 const initialState: CartState = {
@@ -40,26 +31,21 @@ const cartSlice = createSlice({
   name: "cart",
   initialState,
   reducers: {
-    // Add a product to the cart with quantity management and sessionStorage sync
-    addToCart: (state, action: PayloadAction<CartItem>) => {
-      const p = action.payload;
-      const existing = state.items.find((i) => i.id === p.id);
-      if (existing) {
-        existing.quantity += 1; // Increment quantity if item already in cart
-      } else {
-        state.items.push({ ...p, quantity: 1 });
-      }
-      // Sync to sessionStorage
-      // sessionStorage.setItem("productItem", JSON.stringify(state.items));
-      // console.log(p);
+
+    // Add a product to the cart with quantity management
+    addToCart: (state, { payload }: PayloadAction<AddToCartPayload>) => {
+      const item = state.items.find((i) => i.id === payload.id);
+      if (item) item.quantity += 1;
+      else state.items.push({ ...payload, quantity: 1 });
     },
-    // Remove a product from the cart by ID and sync to sessionStorage
+
+    // Remove a product from the cart that matches the given ID by filtering it out of the items array
+    // and assigning the filtered array back to state.items array
     removeFromCart: (state, action: PayloadAction<string>) => {
       state.items = state.items.filter((item) => item.id !== action.payload);
-      // Sync to sessionStorage
-      // sessionStorage.setItem("productItem", JSON.stringify(state.items));
     },
-    // Update the quantity of a specific cart item and sync to sessionStorage
+
+    // Update the quantity of a specific cart item 
     updateQuantity: (
       state,
       action: PayloadAction<{ id: string; quantity: number }>
@@ -73,18 +59,15 @@ const cartSlice = createSlice({
       } else {
         item.quantity = quantity; //Sets exact quantity
       }
-      // Sync to sessionStorage
-      // sessionStorage.setItem("productItem", JSON.stringify(state.items));
     },
     // Set a new tax rate for the cart
     setTaxRate: (state, action: PayloadAction<number>) => {
       state.taxRate = action.payload;
     },
 
-    // clearing the Redux state and sessionStorage
+    // clearing the Redux state
     clearCart: (state) => {
       state.items = [];
-      // sessionStorage.removeItem("productItem");
     },
   },
 });

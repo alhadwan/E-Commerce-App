@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import type { RootState, AppDispatch } from "../Redux./store.ts";
+import type { RootState, AppDispatch } from "../../Redux./store.ts";
 import { Row, Col, Button } from "react-bootstrap";
-import { clearCart } from "../Redux./cartSlice.ts";
+import { clearCart } from "../../Redux./cartSlice.ts";
 import { useNavigate } from "react-router-dom";
 import { addDoc, collection, serverTimestamp } from "firebase/firestore";
-import { db } from "../firebaseConfig.ts";
-import { useAuth } from "../hooks/useAuth";
+import { db } from "../../firebaseConfig.ts";
+import { useAuth } from "../../hooks/useAuth.ts";
 
 //This component displays the order summary during checkout and allows users to place their order.
 
@@ -41,7 +41,7 @@ const Checkout = () => {
       // Generate order number before clearing cart
       const orderNumber = `#ORD-${Date.now()}`;
 
-      // Prepare order data
+      // Prepare order data to save to Firestore
       const orderData = {
         orderNumber,
         items: cartItems,
@@ -69,6 +69,7 @@ const Checkout = () => {
   return (
     <div>
       <Row className="m-5">
+        {/* Order Items */}
         <Col md={8}>
           <div className="mb-4">
             <h3 className="mb-3">Order Items ({cartItems.length})</h3>
@@ -117,6 +118,7 @@ const Checkout = () => {
             ))}
           </div>
         </Col>
+        {/* Order Summary */}
         <Col md={4}>
           <div className="card shadow-sm sticky-top" style={{ top: "20px" }}>
             <div className="card-header bg-primary text-white">

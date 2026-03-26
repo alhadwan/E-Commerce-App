@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { db } from "../firebaseConfig";
+import { db } from "../../firebaseConfig";
 import { getDocs, collection, query, where, orderBy } from "firebase/firestore";
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "../../hooks/useAuth";
 import Row from "react-bootstrap/esm/Row";
 import Col from "react-bootstrap/esm/Col";
 
@@ -52,21 +52,27 @@ const Orders = () => {
       }
 
       try {
-        // Query to get ALL orders for the current user, ordered by timestamp (newest first)
+        // first: Query to get ALL orders for the current user, ordered by timestamp (newest first)
         const ordersQuery = query(
           collection(db, "orders"),
           where("userId", "==", user.uid),
           orderBy("timestamp", "desc")
         );
 
-        // Execute the query
+        // second: Execute the query to get the order documents for the current user, ordered by timestamp (newest first)
         const querySnapshot = await getDocs(ordersQuery);
         if (!querySnapshot.empty) {
+          /*
+            querySnapshot.empty       // true/false
+            querySnapshot.docs        // array of order documents
+            querySnapshot.docs.map()  // used to build your ordersData array
+            querySnapshot.docs.data()   // the actual order data for each document
+          */
           const ordersData = querySnapshot.docs.map((doc) => ({
             id: doc.id,
             ...doc.data(),
           })) as Order[];
-
+          
           setData(ordersData);
         } else {
           setError("No orders found");

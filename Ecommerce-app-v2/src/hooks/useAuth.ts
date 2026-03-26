@@ -6,14 +6,13 @@ import { auth, db } from "../firebaseConfig";
 
 //This component is a custom hook to manage authentication state and user profile data
 
-//Defines the structure of user data stored in Firestore
 interface UserProfile {
   uid: string;
   email: string;
   name: string;
   createdAt: Date;
 }
-// Defines what useAuth hook returns
+
 interface AuthState {
   user: User | null;
   userProfile: UserProfile | null;
@@ -36,14 +35,13 @@ export const useAuth = (): AuthState => {
     updatedData: Partial<UserProfile>
   ) => {
     try {
-      // Update Firestore first
-      const userDoc = doc(db, "users", userId);
-      await updateDoc(userDoc, updatedData);
+      const userDoc = doc(db, "users", userId); // a pointer to the user document in Firestore
+      await updateDoc(userDoc, updatedData); // updateData = updateUser(userId, updatedData) 
       console.log("Firestore updated successfully");
 
-      // Update local state immediately so UI updates
-      
+      // Update local state immediately so UI updates 
       if (user && user.uid === userId) {
+        //merges old profile + new changed fields.
         setUserProfile((prev) => {
           const newProfile = prev ? { ...prev, ...updatedData } : null;
           console.log("Updated local profile:", newProfile);
@@ -61,7 +59,7 @@ export const useAuth = (): AuthState => {
     }
   };
 
-// Listen for authentication state changes
+// Listen for authentication state changes and get the user data for whoever is signed in.
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser); //it contain the user whoever signed in
@@ -70,7 +68,7 @@ export const useAuth = (): AuthState => {
           //get the user info that just signed in
           const userDoc = await getDoc(doc(db, "users", currentUser.uid));
           if (userDoc.exists()) {
-            setUserProfile(userDoc.data() as UserProfile);
+            setUserProfile(userDoc.data() as UserProfile); // Set user profile data from Firestore
           }
         } catch (error) {
           console.error("Error fetching user profile:", error);

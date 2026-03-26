@@ -27,3 +27,4 @@ yarn.lock
 *.sqlite3
 *.db
 .vercel
+**/OUTLINE.md

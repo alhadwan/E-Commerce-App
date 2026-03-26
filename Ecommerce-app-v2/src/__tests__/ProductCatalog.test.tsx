@@ -4,7 +4,7 @@ import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
 import { configureStore } from "@reduxjs/toolkit";
 import "@testing-library/jest-dom";
-import ProductCatalog from "../components/ProductCatalog";
+import ProductCatalog from "../components/Pages/ProductCatalog";
 import cartSlice from "../Redux./cartSlice";
 
 // Create a mock store for testing

@@ -1,17 +1,17 @@
 import { FaStarHalfAlt, FaStar, FaRegStar } from "react-icons/fa";
 
-// FaStar = full ⭐, FaStarHalfAlt = half ⭐, FaRegStar = empty ☆
-
-// This function display the product rating icon according to its value
 type ProductRatingProps = {
   value: number;
   count: number | string;
 };
 
+// FaStar = full ⭐, FaStarHalfAlt = half ⭐, FaRegStar = empty ☆
+// This function display the product rating icon according to its value 
+// and the number of ratings it has. It uses conditional rendering to 
+// show the appropriate star icons based on the rating value and count.
 const ProductRating = ({ value, count }: ProductRatingProps) => {
   return (
     <>
-      {/* using conditional rendering to display the rating stars for each value */}
       <span className="me-2" style={{ color: "#f8e825" }}>
         {value >= 1 ? (<FaStar />) : value >= 0.5 ? (<FaStarHalfAlt />) : (<FaRegStar />)}
 

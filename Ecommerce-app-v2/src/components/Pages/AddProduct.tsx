@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { db } from "../firebaseConfig";
+import { db } from "../../firebaseConfig";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 
 // this component allows users to add a new product item to the product list
@@ -69,6 +69,7 @@ const AddProduct = () => {
   ) => {
     const { name, value } = e.target;
 
+    // Parse numeric values for price, rating.rate, and rating.count
     if (name === "price") {
       setForm((prevState) => ({
         ...prevState,

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth, db } from "../firebaseConfig";
+import { auth, db } from "../../firebaseConfig";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import { Link } from "react-router-dom";
@@ -22,7 +22,9 @@ interface RegistrationForm {
   password: string;
 }
 
-// This component handles user registration functionality
+// This component handles user registration by creating a new user with Firebase Authentication,
+// storing additional profile information in Firestore, 
+// and provides feedback on registration success or failure.
 const Registration = () => {
   const navigate = useNavigate();
   const [form, setForm] = useState<RegistrationForm>({
@@ -43,7 +45,7 @@ const Registration = () => {
     });
   };
 
-  // This function handles form submission and user registration
+  // This function handles form submission and user registration with Firebase Authentication and Firestore
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -56,17 +58,31 @@ const Registration = () => {
         form.email,
         form.password
       );
-      const user = userCredential.user;
+      const user = userCredential.user;  // Get the created user from the credential object
+      // output of the userCredential object looks like this:
+      /** 
+              {
+              user: {
+                uid: "abc123",
+                email: "ali@example.com",
+                emailVerified: false,
+                // other auth fields/methods
+              },
+              operationType: "signIn",
+              providerId: null
+            }
+       * 
+      */
 
-      // Store additional user profile in Firestore not including password
+      // Prepare user profile data to store in Firestore
       const userProfile: UserProfile = {
         uid: user.uid,
         name: form.name,
         email: user.email!,
         createdAt: new Date(),
       };
-      // Use user.uid as the document ID to ensure uniqueness and easy retrieval
-      await setDoc(doc(db, "users", user.uid), userProfile);
+      // Store user profile in Firestore using setDoc function
+      await setDoc(doc(db, "users", user.uid), userProfile); //setDoc(docRef, data)
       setSuccess(true);
       setForm({ email: "", password: "", name: "" });
       navigate("/");

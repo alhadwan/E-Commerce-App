@@ -1,23 +1,21 @@
 import { useState, useEffect } from "react";
 import { CardBody } from "react-bootstrap";
 import { useDispatch } from "react-redux";
-import { addToCart } from "../Redux./cartSlice";
-import ProductRating from "./ProductRating.tsx";
+import { addToCart } from "../../Redux./cartSlice.ts";
+import ProductRating from "../ProductRating.tsx";
 import { Container, Row, Col, Card, ListGroup, Button } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import type { AppDispatch } from "../Redux./store.ts";
-import { db } from "../firebaseConfig.ts";
+import type { AppDispatch } from "../../Redux./store.ts";
+import { db } from "../../firebaseConfig.ts";
 import { collection, getDocs } from "firebase/firestore";
 
 // This component displays a catalog of products based on the selected category and allows users to add products to their cart.
 
-// Interface for ProductCatalog component props
 interface productProps {
   selectedCategory: string;
 }
 
-// Interface for Product type
-type Product = {
+interface Product {
   id?: string;
   title: string;
   description: string;
@@ -31,22 +29,26 @@ type Product = {
   };
 };
 
-// Using `useQuery` to fetch GET, Handles caching, background refetch, retries for you.
-// also, returns data, isLoading and error and receives props from App.tsx
+// fetching the products from Firestore and filtering them based on the selected category. 
+// It also handles adding products to the cart using Redux actions.
 const ProductCatalog: React.FC<productProps> = ({ selectedCategory }) => {
   const dispatch = useDispatch<AppDispatch>();
   const [data, setData] = useState<Product[]>([]);
+
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const querySnapshot = await getDocs(collection(db, "products"));
+        // products return a list of all products in the Firestore collection, 
+        // each with its ID and all other fields from the document data.
         const products = querySnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
         })) as Product[];
-
-        // Filter products by category if not "all"
+        
+        // Filter products by category(selectedCategory for app.tsx) if not "all"
+        // and set the state with the filtered products. If "all" is selected, it will show all products without filtering.
         const filteredProducts =
           selectedCategory === "all"
             ? products
@@ -71,7 +73,6 @@ const ProductCatalog: React.FC<productProps> = ({ selectedCategory }) => {
         title: product.title,
         price: product.price,
         image: product.image,
-        quantity: 1,
       })
     );
   };

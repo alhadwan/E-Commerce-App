@@ -1,4 +1,4 @@
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "../../hooks/useAuth";
 import { Card, ListGroup, Button, Form } from "react-bootstrap";
 import { useState } from "react";
 
@@ -13,12 +13,13 @@ const Profile = () => {
   if (loading) {
     return <div className="d-flex justify-content-center mt-5">Loading...</div>;
   }
-
+  // Function to handle updating the user's name 
+  // by using the updateUser function from the useAuth hook
   const handleUpdateName = async () => {
     if (!userProfile || !newName.trim()) return;
 
     try {
-      await updateUser(userProfile.uid, { name: newName });
+      await updateUser(userProfile.uid, { name: newName }); //updateUser(userId, updatedData) 
       setNewName("");
       alert("Name updated successfully!");
     } catch (error) {
@@ -26,11 +27,13 @@ const Profile = () => {
     }
   };
 
+  // Function to handle updating the user's email
+  // by using the updateUser function from the useAuth hook
   const handleUpdateEmail = async () => {
     if (!userProfile || !newEmail.trim()) return;
 
     try {
-      await updateUser(userProfile.uid, { email: newEmail });
+      await updateUser(userProfile.uid, { email: newEmail }); //updateUser(userId, updatedData)
       setNewEmail(""); 
       alert("Email updated successfully!");
     } catch (error) {
