@@ -4,7 +4,6 @@ import type { RootState, AppDispatch } from "../../Redux./store.ts";
 import { removeFromCart, updateQuantity } from "../../Redux./cartSlice.ts";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
-import { auth } from "../../firebaseConfig";
 
 // This component displays the items in the cart and allows users to proceed to checkout,
 // Also update item quantities, or remove items from the cart.

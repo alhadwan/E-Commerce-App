@@ -1,7 +1,7 @@
 import React from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
-import { FaShoppingCart } from "react-icons/fa";
+import { FaShoppingCart, FaSun, FaMoon } from "react-icons/fa";
 import type { RootState } from "../Redux./store";
 import { db } from "../firebaseConfig";
 import Button from "react-bootstrap/esm/Button";
@@ -9,6 +9,8 @@ import { useState, useEffect } from "react";
 import { collection, getDocs } from "firebase/firestore";
 import { useAuth } from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
+import { toggleTheme } from "../Redux./themeSlice";
+import type { AppDispatch } from "../Redux./store";
 
 //This component displays the navigation bar with category selection and cart item count
 
@@ -22,9 +24,12 @@ interface NavbarProps {
 const Navbar: React.FC<NavbarProps> = ({ category, onChange }) => {
   const { user, userProfile, logout } = useAuth();
   const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
 
   // Get cart items count from Redux store
   const cartItems = useSelector((state: RootState) => state.cart.items);
+  const theme = useSelector((state: RootState) => state.theme);
+
   const cartItemCount = cartItems.reduce(
     (total, item) => total + item.quantity,
     0,
@@ -84,6 +89,15 @@ const Navbar: React.FC<NavbarProps> = ({ category, onChange }) => {
                 ))}
               </select>
             </div>
+            <Button
+              variant="outline-light"
+              size="sm"
+              onClick={() => dispatch(toggleTheme())}
+              aria-label="Toggle theme"
+            >
+              {theme === "light" ? <FaMoon /> : <FaSun />}
+            </Button>
+
             <div className="">
               <Link
                 to="/cart"
