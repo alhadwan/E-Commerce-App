@@ -3,11 +3,12 @@ import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { FaShoppingCart } from "react-icons/fa";
 import type { RootState } from "../Redux./store";
-import { signOut } from "firebase/auth";
-import { auth, db } from "../firebaseConfig";
+import { db } from "../firebaseConfig";
 import Button from "react-bootstrap/esm/Button";
 import { useState, useEffect } from "react";
 import { collection, getDocs } from "firebase/firestore";
+import { useAuth } from "../hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
 //This component displays the navigation bar with category selection and cart item count
 
@@ -19,11 +20,14 @@ interface NavbarProps {
 
 // Navbar component which receives props from app.tsx and fetches categories
 const Navbar: React.FC<NavbarProps> = ({ category, onChange }) => {
+  const { user, userProfile, logout } = useAuth();
+  const navigate = useNavigate();
+
   // Get cart items count from Redux store
   const cartItems = useSelector((state: RootState) => state.cart.items);
   const cartItemCount = cartItems.reduce(
     (total, item) => total + item.quantity,
-    0
+    0,
   );
   const [success, setSuccess] = useState<boolean>(false);
   const [categories, setCategories] = useState<string[]>([]);
@@ -45,12 +49,12 @@ const Navbar: React.FC<NavbarProps> = ({ category, onChange }) => {
 
   const handleLogout = async () => {
     try {
-      await signOut(auth);
+      await logout();
       setSuccess(true);
-
       setTimeout(() => {
         setSuccess(false);
       }, 3000);
+      navigate("/");
     } catch (error) {
       console.error("Error signing out: ", error);
     }
@@ -98,16 +102,18 @@ const Navbar: React.FC<NavbarProps> = ({ category, onChange }) => {
             </div>
 
             {/* Toggler */}
-            <button
-              className="navbar-toggler"
-              type="button"
-              data-bs-toggle="offcanvas"
-              data-bs-target="#offcanvasNavbar"
-              aria-controls="offcanvasNavbar"
-              aria-label="Toggle navigation"
-            >
-              <span className="navbar-toggler-icon" />
-            </button>
+            {user && (
+              <button
+                className="navbar-toggler"
+                type="button"
+                data-bs-toggle="offcanvas"
+                data-bs-target="#offcanvasNavbar"
+                aria-controls="offcanvasNavbar"
+                aria-label="Toggle navigation"
+              >
+                <span className="navbar-toggler-icon" />
+              </button>
+            )}
           </div>
 
           {/* Offcanvas / Main menu */}
@@ -136,13 +142,15 @@ const Navbar: React.FC<NavbarProps> = ({ category, onChange }) => {
               <Button variant="outline-light" size="sm" onClick={handleLogout}>
                 Logout
               </Button>
+              {userProfile?.role === "admin" && (
+                <Link
+                  to="/add-product"
+                  className="btn btn-outline-light btn-hover-white"
+                >
+                  Add Product
+                </Link>
+              )}
 
-              <Link
-                to="/add-product"
-                className="btn btn-outline-light btn-hover-white"
-              >
-                Add Product
-              </Link>
               <Link to="/delete-account" className="btn btn-outline-danger">
                 Delete Account
               </Link>

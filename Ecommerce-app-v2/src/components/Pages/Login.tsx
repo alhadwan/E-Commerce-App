@@ -1,6 +1,10 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import {
+  signInWithEmailAndPassword,
+  setPersistence,
+  browserLocalPersistence,
+} from "firebase/auth";
 import { auth } from "../../firebaseConfig";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
@@ -39,6 +43,7 @@ const Login = () => {
 
     try {
       // Use Firebase Auth to login
+      await setPersistence(auth, browserLocalPersistence);
       await signInWithEmailAndPassword(auth, form.email, form.password);
       setSuccess(true);
       setForm({ email: "", password: "" });

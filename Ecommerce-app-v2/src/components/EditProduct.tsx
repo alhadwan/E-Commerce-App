@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { db } from "../firebaseConfig";
+import {db } from "../firebaseConfig";
 import { doc, updateDoc, getDoc } from "firebase/firestore";
+import { useAuth } from "../hooks/useAuth";
 
 // this component allows users to edit an existing product
 
@@ -18,6 +19,8 @@ interface FormState {
 }
 
 const EditProduct = () => {
+
+
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [success, setSuccess] = useState(false);

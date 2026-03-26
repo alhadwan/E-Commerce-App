@@ -13,6 +13,7 @@ interface UserProfile {
   uid: string;
   name: string;
   email: string;
+  role: string;
   createdAt: Date;
 }
 // Defines what data the form collects from user
@@ -23,7 +24,7 @@ interface RegistrationForm {
 }
 
 // This component handles user registration by creating a new user with Firebase Authentication,
-// storing additional profile information in Firestore, 
+// storing additional profile information in Firestore,
 // and provides feedback on registration success or failure.
 const Registration = () => {
   const navigate = useNavigate();
@@ -56,9 +57,9 @@ const Registration = () => {
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         form.email,
-        form.password
+        form.password,
       );
-      const user = userCredential.user;  // Get the created user from the credential object
+      const user = userCredential.user; // Get the created user from the credential object
       // output of the userCredential object looks like this:
       /** 
               {
@@ -66,7 +67,6 @@ const Registration = () => {
                 uid: "abc123",
                 email: "ali@example.com",
                 emailVerified: false,
-                // other auth fields/methods
               },
               operationType: "signIn",
               providerId: null
@@ -79,6 +79,7 @@ const Registration = () => {
         uid: user.uid,
         name: form.name,
         email: user.email!,
+        role: "user", // default role for new users
         createdAt: new Date(),
       };
       // Store user profile in Firestore using setDoc function

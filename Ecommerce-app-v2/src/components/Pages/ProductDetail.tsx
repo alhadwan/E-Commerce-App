@@ -11,6 +11,7 @@ import { useState, useEffect } from "react";
 import { db } from "../../firebaseConfig";
 import { doc, getDoc } from "firebase/firestore";
 import DeleteProduct from "../DeleteProduct";
+import { useAuth } from "../../hooks/useAuth";
 
 // This component displays detailed information about a specific product and allows users to add it to their cart also edit/delete product.
 
@@ -28,6 +29,8 @@ type Product = {
   };
 };
 const ProductDetail = () => {
+  const { user, userProfile } = useAuth();
+
   // Get the product ID from the URL parameters
   const { id } = useParams<{ id: string }>();
   const dispatch = useDispatch<AppDispatch>();
@@ -47,7 +50,7 @@ const ProductDetail = () => {
             id: docSnap.id,
             ...docSnap.data(),
           } as Product;
-          setProduct(productData); 
+          setProduct(productData);
         } else {
           console.log("No such product!");
         }
@@ -71,7 +74,7 @@ const ProductDetail = () => {
         title: product.title,
         price: product.price,
         image: product.image,
-      })
+      }),
     );
     setSuccess(true);
     setTimeout(() => {
@@ -141,13 +144,15 @@ const ProductDetail = () => {
               >
                 Add to Cart
               </Button>
-              <Link
-                to={`/edit-product/${product.id}`}
-                className="btn btn-warning w-100 mt-2"
-              >
-                Edit Product
-              </Link>
-              <DeleteProduct />
+              {userProfile?.role == "admin" && (
+                <Link
+                  to={`/edit-product/${product.id}`}
+                  className="btn btn-warning w-100 mt-2"
+                >
+                  Edit Product
+                </Link>
+              )}
+              {userProfile?.role == "admin" && <DeleteProduct />}
             </ListGroup.Item>
             {success && (
               <p className="text-success">Item added to cart successfully!</p>

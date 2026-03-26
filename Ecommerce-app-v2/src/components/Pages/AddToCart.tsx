@@ -1,20 +1,23 @@
 import { Row, Col, Button } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
-import type { RootState, AppDispatch } from "../Redux./store.ts";
-import { removeFromCart, updateQuantity } from "../Redux./cartSlice.ts";
+import type { RootState, AppDispatch } from "../../Redux./store.ts";
+import { removeFromCart, updateQuantity } from "../../Redux./cartSlice.ts";
 import { Link } from "react-router-dom";
+import { useAuth } from "../../hooks/useAuth";
+import { auth } from "../../firebaseConfig";
 
 // This component displays the items in the cart and allows users to proceed to checkout,
 // Also update item quantities, or remove items from the cart.
 
 const AddToCart = () => {
+  const { user, loading } = useAuth();
   const cartItems = useSelector((state: RootState) => state.cart.items);
   const dispatch = useDispatch<AppDispatch>();
 
   // Calculate total number of items in the cart
   const cartItemCount = cartItems.reduce(
     (total, item) => total + item.quantity,
-    0
+    0,
   );
 
   // Calculate item price before tax
@@ -98,7 +101,7 @@ const AddToCart = () => {
                                 updateQuantity({
                                   id: item.id,
                                   quantity: Math.max(1, item.quantity - 1),
-                                })
+                                }),
                               )
                             }
                             disabled={item.quantity <= 1}
@@ -116,7 +119,7 @@ const AddToCart = () => {
                                 updateQuantity({
                                   id: item.id,
                                   quantity: item.quantity + 1,
-                                })
+                                }),
                               )
                             }
                           >
@@ -155,13 +158,27 @@ const AddToCart = () => {
                 <span>${itemPrice.toFixed(2)}</span>
               </div>
               <hr />
-              <Link
-                to="/checkout"
-                className="btn btn-success btn-lg w-100 text-decoration-none"
-              >
-                <i className="fas fa-credit-card me-2"></i>
-                Proceed to Checkout
-              </Link>
+
+              {loading ? (
+                <div>Loading...</div>
+              ) : user ? (
+                <Link
+                  to={"/checkout"}
+                  className="btn btn-success btn-lg w-100 text-decoration-none"
+                >
+                  <i className="fas fa-credit-card me-2"></i>
+                  Proceed to Checkout
+                </Link>
+              ) : (
+                <Link
+                  to={"/login"}
+                  className="btn btn-success btn-lg w-100 text-decoration-none"
+                >
+                  <i className="fas fa-credit-card me-2"></i>
+                  Proceed to Checkout
+                </Link>
+              )}
+
               <Link
                 to="/"
                 className="btn btn-outline-primary w-100 mt-2 text-decoration-none"

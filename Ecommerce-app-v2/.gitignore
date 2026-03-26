@@ -11,6 +11,18 @@ node_modules
 dist
 dist-ssr
 *.local
+# Editor directories and files
+.vscode/
+.gitignore
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
 
 # Environment variables
 .env
