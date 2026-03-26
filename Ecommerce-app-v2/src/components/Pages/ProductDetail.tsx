@@ -29,7 +29,7 @@ type Product = {
   };
 };
 const ProductDetail = () => {
-  const { user, userProfile } = useAuth();
+  const { userProfile } = useAuth();
 
   // Get the product ID from the URL parameters
   const { id } = useParams<{ id: string }>();
